@@ -179,12 +179,16 @@ function getUomCopy(unit: GoalUnit) {
 export function EmployeeWorkspace({ userName, snapshot }: EmployeeWorkspaceProps) {
   const [activePanel, setActivePanel] = useState<EmployeePanel>("goals");
   const [activeTab, setActiveTab] = useState<EmployeeTab>("goal-sheet");
-  const [goals, setGoals] = useState<Goal[]>(snapshot.goals);
+  const [goals, setGoals] = useState<Goal[]>([]);
   const [goalDraft, setGoalDraft] = useState<GoalDraft>(emptyGoalDraft);
   const [editingGoalId, setEditingGoalId] = useState<string | null>(null);
+  const [selectedPreviousGoalId, setSelectedPreviousGoalId] = useState<string>(snapshot.goals[0]?.id ?? "");
   const [checkInsByTab, setCheckInsByTab] = useState(() =>
-    buildCheckInState(snapshot.goals, snapshot.checkIns)
+    buildCheckInState([], snapshot.checkIns)
   );
+  const previousGoals = snapshot.goals;
+  const selectedPreviousGoal =
+    previousGoals.find((goal) => goal.id === selectedPreviousGoalId) ?? previousGoals[0] ?? null;
 
   const totalWeightage = useMemo(
     () => goals.reduce((sum, goal) => sum + goal.weight, 0),
@@ -408,7 +412,7 @@ export function EmployeeWorkspace({ userName, snapshot }: EmployeeWorkspaceProps
       </aside>
 
       <main className="ml-[200px] min-h-screen">
-        <div className="border-b border-gray-200 bg-white px-10 py-6">
+        <div className="border-b border-gray-200 bg-white px-8 py-5">
           <div className="flex items-start justify-between gap-6">
             <div>
               <h1 className="text-[22px] font-medium tracking-tight text-gray-900">{pageTitle}</h1>
@@ -416,14 +420,14 @@ export function EmployeeWorkspace({ userName, snapshot }: EmployeeWorkspaceProps
             </div>
             <div className="flex items-center gap-3">
               <button
-                className="rounded-xl border border-gray-300 bg-white px-5 py-3 text-[13px] font-medium text-gray-700"
+                className="rounded-xl border border-gray-300 bg-white px-4 py-2.5 text-[13px] font-medium text-gray-700"
                 type="button"
               >
                 Export
               </button>
               {showTabbedWorkspace ? (
                 <button
-                  className="rounded-xl bg-blue-700 px-5 py-3 text-[13px] font-semibold text-white disabled:cursor-not-allowed disabled:bg-blue-300"
+                  className="rounded-xl bg-blue-700 px-4 py-2.5 text-[13px] font-semibold text-white disabled:cursor-not-allowed disabled:bg-blue-300"
                   disabled={activeTab !== "goal-sheet" ? !activeQuarterMeta?.isOpen : !canSubmit}
                   onClick={activeTab === "goal-sheet" ? submitGoalSheet : undefined}
                   type="button"
@@ -457,7 +461,7 @@ export function EmployeeWorkspace({ userName, snapshot }: EmployeeWorkspaceProps
           ) : null}
         </div>
 
-        <div className="px-10 py-8">
+        <div className="px-8 py-6">
           {activePanel === "notifications" ? (
             <EmployeeNotificationsPanel
               canSubmit={canSubmit}
@@ -466,9 +470,9 @@ export function EmployeeWorkspace({ userName, snapshot }: EmployeeWorkspaceProps
               sheetStatus={sheetStatus}
             />
           ) : activeTab === "goal-sheet" ? (
-            <div className="space-y-6 pb-32">
-              <div className="grid gap-4 md:grid-cols-3">
-                <div className="rounded-lg border border-gray-200 bg-gray-50 p-5">
+            <div className="space-y-4 pb-28">
+              <div className="grid gap-3 md:grid-cols-3">
+                <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
                   <p className="text-[28px] font-medium text-gray-900">{totalWeightage}%</p>
                   <p className="mt-2 text-[13px] text-gray-500">Total weightage</p>
                   <span
@@ -477,7 +481,7 @@ export function EmployeeWorkspace({ userName, snapshot }: EmployeeWorkspaceProps
                     {weightValid ? "Valid" : "Must equal 100%"}
                   </span>
                 </div>
-                <div className="rounded-lg border border-gray-200 bg-gray-50 p-5">
+                <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
                   <p className="text-[28px] font-medium text-gray-900">{goalCount} / 8</p>
                   <p className="mt-2 text-[13px] text-gray-500">Goal count</p>
                   <span
@@ -486,7 +490,7 @@ export function EmployeeWorkspace({ userName, snapshot }: EmployeeWorkspaceProps
                     {goalCountValid ? "Within limit" : "Goal limit exceeded"}
                   </span>
                 </div>
-                <div className="rounded-lg border border-gray-200 bg-gray-50 p-5">
+                <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
                   <p className="text-[28px] font-medium text-gray-900">{sheetStatus}</p>
                   <p className="mt-2 text-[13px] text-gray-500">Sheet status</p>
                   <span
@@ -501,8 +505,8 @@ export function EmployeeWorkspace({ userName, snapshot }: EmployeeWorkspaceProps
                 </div>
               </div>
 
-              <div className="rounded-xl border border-gray-200 bg-white p-6">
-                <div className="mb-5 flex items-center justify-between">
+              <div className="rounded-xl border border-gray-200 bg-white p-4">
+                <div className="mb-4 flex items-center justify-between gap-4">
                   <div>
                     <p className="text-[15px] font-medium text-gray-900">
                       {editingGoalId ? "Edit goal" : "Create goal"}
@@ -511,6 +515,24 @@ export function EmployeeWorkspace({ userName, snapshot }: EmployeeWorkspaceProps
                       Fill the goal details below. Shared goals keep title and target read-only.
                     </p>
                   </div>
+                  {previousGoals.length > 0 ? (
+                    <div className="min-w-[240px] space-y-2">
+                      <span className="block text-[12px] uppercase tracking-[0.04em] text-gray-400">
+                        Previous goals
+                      </span>
+                      <select
+                        className="w-full rounded-lg border border-gray-200 px-3 py-2.5 text-[14px] outline-none focus:border-blue-700 focus:ring-2 focus:ring-blue-100"
+                        onChange={(event) => setSelectedPreviousGoalId(event.target.value)}
+                        value={selectedPreviousGoalId}
+                      >
+                        {previousGoals.map((goal) => (
+                          <option key={goal.id} value={goal.id}>
+                            {goal.title}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  ) : null}
                   {(editingGoalId || goalDraft.title || goalDraft.description || goalDraft.thrustArea) && (
                     <button
                       className="rounded-lg border border-gray-300 px-4 py-2 text-[13px] font-medium text-gray-600"
@@ -522,11 +544,34 @@ export function EmployeeWorkspace({ userName, snapshot }: EmployeeWorkspaceProps
                   )}
                 </div>
 
-                <div className="grid gap-4 md:grid-cols-2">
+                {selectedPreviousGoal ? (
+                  <div className="mb-4 rounded-lg border border-gray-200 bg-gray-50 px-4 py-3">
+                    <div className="flex items-start justify-between gap-3">
+                      <div>
+                        <p className="text-[15px] font-medium text-gray-900">{selectedPreviousGoal.title}</p>
+                        <p className="mt-1 text-[13px] text-gray-400">
+                          {selectedPreviousGoal.thrustArea} · {getUomCopy(selectedPreviousGoal.unit)}
+                        </p>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className="rounded-full bg-blue-50 px-3 py-1 text-[12px] font-semibold text-blue-700">
+                          {selectedPreviousGoal.weight}%
+                        </span>
+                        <span
+                          className={`rounded-full px-3 py-1 text-[11px] font-medium ${getGoalCardStatusTone(selectedPreviousGoal.state)}`}
+                        >
+                          {selectedPreviousGoal.state}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                ) : null}
+
+                <div className="grid gap-3 md:grid-cols-2">
                   <label className="space-y-2">
                     <span className="text-[12px] uppercase tracking-[0.04em] text-gray-400">Goal title</span>
                     <input
-                      className="w-full rounded-lg border border-gray-200 px-4 py-3 text-[14px] outline-none ring-0 focus:border-blue-700 focus:ring-2 focus:ring-blue-100 disabled:bg-gray-50"
+                      className="w-full rounded-lg border border-gray-200 px-4 py-2.5 text-[14px] outline-none ring-0 focus:border-blue-700 focus:ring-2 focus:ring-blue-100 disabled:bg-gray-50"
                       disabled={sheetStatus !== "Draft" || goalDraft.shared}
                       onChange={(event) =>
                         setGoalDraft((current) => ({ ...current, title: event.target.value }))
@@ -537,7 +582,7 @@ export function EmployeeWorkspace({ userName, snapshot }: EmployeeWorkspaceProps
                   <label className="space-y-2">
                     <span className="text-[12px] uppercase tracking-[0.04em] text-gray-400">Thrust area</span>
                     <input
-                      className="w-full rounded-lg border border-gray-200 px-4 py-3 text-[14px] outline-none ring-0 focus:border-blue-700 focus:ring-2 focus:ring-blue-100 disabled:bg-gray-50"
+                      className="w-full rounded-lg border border-gray-200 px-4 py-2.5 text-[14px] outline-none ring-0 focus:border-blue-700 focus:ring-2 focus:ring-blue-100 disabled:bg-gray-50"
                       disabled={sheetStatus !== "Draft"}
                       onChange={(event) =>
                         setGoalDraft((current) => ({ ...current, thrustArea: event.target.value }))
@@ -548,7 +593,7 @@ export function EmployeeWorkspace({ userName, snapshot }: EmployeeWorkspaceProps
                   <label className="space-y-2">
                     <span className="text-[12px] uppercase tracking-[0.04em] text-gray-400">Unit of measure</span>
                     <select
-                      className="w-full rounded-lg border border-gray-200 px-4 py-3 text-[14px] outline-none ring-0 focus:border-blue-700 focus:ring-2 focus:ring-blue-100 disabled:bg-gray-50"
+                      className="w-full rounded-lg border border-gray-200 px-4 py-2.5 text-[14px] outline-none ring-0 focus:border-blue-700 focus:ring-2 focus:ring-blue-100 disabled:bg-gray-50"
                       disabled={sheetStatus !== "Draft"}
                       onChange={(event) =>
                         setGoalDraft((current) => ({
@@ -568,7 +613,7 @@ export function EmployeeWorkspace({ userName, snapshot }: EmployeeWorkspaceProps
                   <label className="space-y-2">
                     <span className="text-[12px] uppercase tracking-[0.04em] text-gray-400">Target</span>
                     <input
-                      className="w-full rounded-lg border border-gray-200 px-4 py-3 text-[14px] outline-none ring-0 focus:border-blue-700 focus:ring-2 focus:ring-blue-100 disabled:bg-gray-50"
+                      className="w-full rounded-lg border border-gray-200 px-4 py-2.5 text-[14px] outline-none ring-0 focus:border-blue-700 focus:ring-2 focus:ring-blue-100 disabled:bg-gray-50"
                       disabled={sheetStatus !== "Draft" || goalDraft.shared}
                       onChange={(event) =>
                         setGoalDraft((current) => ({ ...current, target: event.target.value }))
@@ -580,7 +625,7 @@ export function EmployeeWorkspace({ userName, snapshot }: EmployeeWorkspaceProps
                   <label className="space-y-2">
                     <span className="text-[12px] uppercase tracking-[0.04em] text-gray-400">Weightage (%)</span>
                     <input
-                      className="w-full rounded-lg border border-gray-200 px-4 py-3 text-[14px] outline-none ring-0 focus:border-blue-700 focus:ring-2 focus:ring-blue-100 disabled:bg-gray-50"
+                      className="w-full rounded-lg border border-gray-200 px-4 py-2.5 text-[14px] outline-none ring-0 focus:border-blue-700 focus:ring-2 focus:ring-blue-100 disabled:bg-gray-50"
                       disabled={sheetStatus !== "Draft"}
                       min={10}
                       onChange={(event) =>
@@ -593,7 +638,7 @@ export function EmployeeWorkspace({ userName, snapshot }: EmployeeWorkspaceProps
                       value={goalDraft.weight}
                     />
                   </label>
-                  <label className="flex items-end gap-3 rounded-lg border border-dashed border-gray-300 px-4 py-3 text-[13px] text-gray-600">
+                  <label className="flex items-end gap-3 rounded-lg border border-dashed border-gray-300 px-4 py-2.5 text-[13px] text-gray-600">
                     <input
                       checked={goalDraft.shared}
                       className="h-4 w-4 rounded border-gray-300 text-blue-700 focus:ring-blue-200"
@@ -613,7 +658,7 @@ export function EmployeeWorkspace({ userName, snapshot }: EmployeeWorkspaceProps
                 <label className="mt-4 block space-y-2">
                   <span className="text-[12px] uppercase tracking-[0.04em] text-gray-400">Description</span>
                   <textarea
-                    className="min-h-28 w-full rounded-lg border border-gray-200 px-4 py-3 text-[14px] outline-none ring-0 focus:border-blue-700 focus:ring-2 focus:ring-blue-100 disabled:bg-gray-50"
+                    className="min-h-24 w-full rounded-lg border border-gray-200 px-4 py-2.5 text-[14px] outline-none ring-0 focus:border-blue-700 focus:ring-2 focus:ring-blue-100 disabled:bg-gray-50"
                     disabled={sheetStatus !== "Draft"}
                     onChange={(event) =>
                       setGoalDraft((current) => ({ ...current, description: event.target.value }))
@@ -622,14 +667,14 @@ export function EmployeeWorkspace({ userName, snapshot }: EmployeeWorkspaceProps
                   />
                 </label>
 
-                <div className="mt-5 flex flex-wrap items-center justify-between gap-3">
+                <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
                   <div className="rounded-lg bg-gray-50 px-4 py-3 text-[13px] text-gray-600">
                     {goalDraft.shared
                       ? "Shared goal: title and target stay read-only for recipient view."
                       : `UoM preview: ${getUomCopy(goalDraft.unit)}`}
                   </div>
                   <button
-                    className="rounded-lg bg-blue-700 px-5 py-3 text-[13px] font-semibold text-white disabled:cursor-not-allowed disabled:bg-blue-300"
+                    className="rounded-lg bg-blue-700 px-4 py-2.5 text-[13px] font-semibold text-white disabled:cursor-not-allowed disabled:bg-blue-300"
                     disabled={
                       sheetStatus !== "Draft" ||
                       !goalDraft.title.trim() ||
@@ -644,10 +689,10 @@ export function EmployeeWorkspace({ userName, snapshot }: EmployeeWorkspaceProps
                 </div>
               </div>
 
-              <div className="space-y-4">
+              <div className="space-y-3">
                 {goals.map((goal) => (
                   <button
-                    className="block w-full rounded-xl border border-gray-200 bg-white p-6 text-left"
+                    className="block w-full rounded-xl border border-gray-200 bg-white p-4 text-left"
                     key={goal.id}
                     onClick={() => startEditGoal(goal)}
                     type="button"
@@ -675,7 +720,7 @@ export function EmployeeWorkspace({ userName, snapshot }: EmployeeWorkspaceProps
                       </div>
                     </div>
 
-                    <div className="mt-5 grid gap-4 text-base md:grid-cols-3">
+                    <div className="mt-4 grid gap-3 text-base md:grid-cols-3">
                       <div>
                         <p className="text-[12px] font-semibold uppercase tracking-[0.04em] text-gray-400">
                           Unit of Measure
@@ -697,7 +742,7 @@ export function EmployeeWorkspace({ userName, snapshot }: EmployeeWorkspaceProps
                     </div>
 
                     {sheetStatus === "Draft" ? (
-                      <div className="mt-5 flex justify-end">
+                      <div className="mt-4 flex justify-end">
                         <span
                           className="text-[13px] font-medium text-rose-600"
                           onClick={(event) => {
@@ -716,7 +761,7 @@ export function EmployeeWorkspace({ userName, snapshot }: EmployeeWorkspaceProps
 
                 {goalCount < 8 ? (
                   <button
-                    className="flex w-full items-center justify-center rounded-xl border border-dashed border-gray-300 bg-white px-6 py-5 text-[13px] font-medium text-gray-500"
+                    className="flex w-full items-center justify-center rounded-xl border border-dashed border-gray-300 bg-white px-6 py-4 text-[13px] font-medium text-gray-500"
                     onClick={() => startCreateGoal(false)}
                     type="button"
                   >
@@ -725,7 +770,7 @@ export function EmployeeWorkspace({ userName, snapshot }: EmployeeWorkspaceProps
                 ) : null}
               </div>
 
-              <div className="sticky bottom-0 flex items-center justify-between gap-4 rounded-t-xl border border-gray-200 bg-white px-6 py-4">
+              <div className="sticky bottom-0 flex items-center justify-between gap-4 rounded-t-xl border border-gray-200 bg-white px-5 py-3">
                 <p
                   className={`text-[12px] font-medium ${
                     canSubmit ? "text-emerald-700" : "text-rose-700"
@@ -734,7 +779,7 @@ export function EmployeeWorkspace({ userName, snapshot }: EmployeeWorkspaceProps
                   {goalSheetValidationMessage}
                 </p>
                 <button
-                  className="rounded-xl bg-blue-700 px-6 py-3 text-[13px] font-semibold text-white disabled:cursor-not-allowed disabled:bg-blue-300"
+                  className="rounded-xl bg-blue-700 px-5 py-2.5 text-[13px] font-semibold text-white disabled:cursor-not-allowed disabled:bg-blue-300"
                   disabled={!canSubmit}
                   onClick={submitGoalSheet}
                   type="button"
