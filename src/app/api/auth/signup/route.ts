@@ -16,6 +16,26 @@ function parseRole(role?: string): Role | null {
   return null;
 }
 
+function getRouteRole(path?: string): Role | null {
+  if (!path) {
+    return null;
+  }
+
+  if (path.startsWith("/employee")) {
+    return "employee";
+  }
+
+  if (path.startsWith("/manager")) {
+    return "manager";
+  }
+
+  if (path.startsWith("/admin")) {
+    return "admin";
+  }
+
+  return null;
+}
+
 export async function POST(request: NextRequest) {
   const body = (await request.json()) as {
     name?: string;
@@ -50,8 +70,11 @@ export async function POST(request: NextRequest) {
     maxAge: 60 * 60 * 12
   });
 
+  const nextRole = getRouteRole(body.next);
   const redirectTo =
-    body.next && body.next.startsWith("/") ? body.next : getDashboardPath(role);
+    body.next && body.next.startsWith("/") && (!nextRole || nextRole === role)
+      ? body.next
+      : getDashboardPath(role);
 
   return NextResponse.json({ redirectTo });
 }

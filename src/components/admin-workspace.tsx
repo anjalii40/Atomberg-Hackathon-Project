@@ -24,7 +24,7 @@ const adminTabs: Array<{ id: AdminTab; label: string }> = [
 const adminNav: Array<{ label: string; section: string; panel: AdminPanel }> = [
   { label: "Governance", section: "WORKSPACE", panel: "governance" },
   { label: "Reporting", section: "WORKSPACE", panel: "reporting" },
-  { label: "Activity log", section: "WORKSPACE", panel: "activity" },
+  { label: "Audit log", section: "WORKSPACE", panel: "activity" },
   { label: "Analytics", section: "PROGRESS", panel: "analytics" },
   { label: "Notifications", section: "PROGRESS", panel: "notifications" }
 ];

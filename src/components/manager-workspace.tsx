@@ -27,7 +27,7 @@ const managerTabs: Array<{ id: ManagerTab; label: string }> = [
 ];
 
 const managerNav: Array<{ label: string; section: string; panel: ManagerPanel }> = [
-  { label: "My team", section: "WORKSPACE", panel: "team" },
+  { label: "Approvals", section: "WORKSPACE", panel: "team" },
   { label: "Check-ins", section: "WORKSPACE", panel: "checkins" },
   { label: "Activity log", section: "WORKSPACE", panel: "activity" },
   { label: "Analytics", section: "PROGRESS", panel: "analytics" },

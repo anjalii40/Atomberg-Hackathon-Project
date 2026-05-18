@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 
-import { AnalyticsSnapshot, AuditEvent, DashboardSnapshot, Goal, GoalUnit, CheckIn, CheckInStatus } from "@/lib/types";
+import { DashboardSnapshot, Goal, GoalUnit, CheckIn, CheckInStatus } from "@/lib/types";
 
 type EmployeeWorkspaceProps = {
   userName: string;
@@ -65,8 +65,6 @@ const emptyGoalDraft: GoalDraft = {
 const workspaceNav: Array<{ label: string; section: string; panel: EmployeePanel }> = [
   { label: "My Goals", section: "WORKSPACE", panel: "goals" },
   { label: "Check-ins", section: "WORKSPACE", panel: "checkins" },
-  { label: "Activity Log", section: "WORKSPACE", panel: "activity" },
-  { label: "Analytics", section: "PROGRESS", panel: "analytics" },
   { label: "Notifications", section: "PROGRESS", panel: "notifications" }
 ];
 
@@ -348,21 +346,13 @@ export function EmployeeWorkspace({ userName, snapshot }: EmployeeWorkspaceProps
       ? "My goal sheet"
       : activePanel === "checkins"
         ? tabs.find((tab) => tab.id === activeTab)?.label ?? "Check-ins"
-        : activePanel === "activity"
-          ? "Activity log"
-          : activePanel === "analytics"
-            ? "Progress analytics"
-            : "Notifications";
+      : "Notifications";
   const cycleMeta =
     activePanel === "goals"
       ? "FY26 · Phase 2 — Goal setting open"
       : activePanel === "checkins"
         ? `FY26 · ${activeQuarterMeta?.period ?? ""}`
-        : activePanel === "activity"
-          ? "FY26 · Recent goal and check-in events"
-          : activePanel === "analytics"
-            ? "FY26 · Goal health and quarterly momentum"
-            : "FY26 · Workflow alerts and reminders";
+        : "FY26 · Workflow alerts and reminders";
 
   return (
     <div className="min-h-screen bg-[#f8f7f3] text-gray-900">
@@ -468,15 +458,7 @@ export function EmployeeWorkspace({ userName, snapshot }: EmployeeWorkspaceProps
         </div>
 
         <div className="px-10 py-8">
-          {activePanel === "activity" ? (
-            <ActivityLogPanel events={snapshot.auditEvents} />
-          ) : activePanel === "analytics" ? (
-            <EmployeeAnalyticsPanel
-              analytics={snapshot.analytics}
-              approvedGoals={goals.filter((goal) => goal.state === "Approved").length}
-              submittedGoals={goals.filter((goal) => goal.state === "Pending Approval").length}
-            />
-          ) : activePanel === "notifications" ? (
+          {activePanel === "notifications" ? (
             <EmployeeNotificationsPanel
               canSubmit={canSubmit}
               checkInPeriod={activeQuarterMeta?.period ?? "Q1 Check-in"}
@@ -771,97 +753,6 @@ export function EmployeeWorkspace({ userName, snapshot }: EmployeeWorkspaceProps
           )}
         </div>
       </main>
-    </div>
-  );
-}
-
-function ActivityLogPanel({ events }: { events: AuditEvent[] }) {
-  return (
-    <div className="space-y-4">
-      {events.map((event) => (
-        <article className="rounded-xl border border-gray-200 bg-white p-6" key={event.id}>
-          <div className="flex items-start justify-between gap-4">
-            <div>
-              <h3 className="text-[15px] font-medium text-gray-900">{event.actor}</h3>
-              <p className="mt-1 text-[13px] text-gray-400">
-                {event.action} on {event.target}
-              </p>
-            </div>
-            <span className="text-[13px] text-gray-500">{event.timestamp}</span>
-          </div>
-        </article>
-      ))}
-    </div>
-  );
-}
-
-function EmployeeAnalyticsPanel({
-  analytics,
-  approvedGoals,
-  submittedGoals
-}: {
-  analytics: AnalyticsSnapshot;
-  approvedGoals: number;
-  submittedGoals: number;
-}) {
-  return (
-    <div className="space-y-6">
-      <div className="grid gap-4 md:grid-cols-3">
-        <div className="rounded-lg border border-gray-200 bg-gray-50 p-5">
-          <p className="text-[28px] font-medium text-gray-900">{approvedGoals}</p>
-          <p className="mt-2 text-[13px] text-gray-500">Approved goals</p>
-        </div>
-        <div className="rounded-lg border border-gray-200 bg-gray-50 p-5">
-          <p className="text-[28px] font-medium text-gray-900">{submittedGoals}</p>
-          <p className="mt-2 text-[13px] text-gray-500">Submitted goals</p>
-        </div>
-        <div className="rounded-lg border border-gray-200 bg-gray-50 p-5">
-          <p className="text-[28px] font-medium text-gray-900">
-            {analytics.quarterlyTrends.at(-1)?.value ?? 0}%
-          </p>
-          <p className="mt-2 text-[13px] text-gray-500">Latest quarterly trend</p>
-        </div>
-      </div>
-
-      <div className="grid gap-4 lg:grid-cols-2">
-        <article className="rounded-xl border border-gray-200 bg-white p-6">
-          <div className="mb-6">
-            <p className="text-[15px] font-medium text-gray-900">QoQ trend</p>
-            <p className="mt-1 text-[13px] text-gray-500">Progress momentum across your current goals</p>
-          </div>
-          <div className="flex items-end justify-between gap-4">
-            {analytics.quarterlyTrends.map((point) => (
-              <div className="flex flex-1 flex-col items-center gap-3" key={point.label}>
-                <div className="flex h-44 w-full max-w-16 items-end rounded-xl bg-blue-50 p-2">
-                  <div className="w-full rounded-lg bg-blue-700" style={{ height: `${point.value}%` }} />
-                </div>
-                <p className="text-base font-medium text-gray-900">{point.value}%</p>
-                <p className="text-[13px] text-gray-500">{point.label}</p>
-              </div>
-            ))}
-          </div>
-        </article>
-
-        <article className="rounded-xl border border-gray-200 bg-white p-6">
-          <div className="mb-6">
-            <p className="text-[15px] font-medium text-gray-900">Goal distribution</p>
-            <p className="mt-1 text-[13px] text-gray-500">Current spread by thrust area</p>
-          </div>
-          <div className="space-y-4">
-            {analytics.goalDistribution.map((row) => (
-              <div key={row.label}>
-                <div className="mb-2 flex items-center justify-between gap-4 text-base">
-                  <span className="font-medium text-gray-900">{row.label}</span>
-                  <span className="text-gray-500">{row.value}%</span>
-                </div>
-                <div className="h-3 overflow-hidden rounded-full bg-gray-100">
-                  <div className="h-full rounded-full bg-blue-700" style={{ width: `${row.value}%` }} />
-                </div>
-              </div>
-            ))}
-          </div>
-        </article>
-      </div>
     </div>
   );
 }
