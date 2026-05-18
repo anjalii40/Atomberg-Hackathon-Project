@@ -339,13 +339,13 @@ export function EmployeeWorkspace({ userName, snapshot }: EmployeeWorkspaceProps
       <aside className="fixed left-0 top-0 flex h-screen w-[200px] flex-col border-r border-gray-200 bg-[#f6f3ec]">
         <div className="border-b border-gray-200 px-5 py-6">
           <p className="text-2xl font-semibold tracking-tight text-gray-900">AtomQuest</p>
-          <p className="mt-1 text-sm text-gray-500">FY26 Goal Cycle</p>
+          <p className="mt-1 text-[13px] text-gray-500">FY26 Goal Cycle</p>
         </div>
 
         <div className="flex-1 overflow-y-auto px-4 py-6">
           {["WORKSPACE", "PROGRESS"].map((section) => (
             <div key={section} className="mb-6">
-              <p className="mb-3 px-2 text-xs font-semibold uppercase tracking-[0.18em] text-gray-400">
+              <p className="mb-3 px-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-gray-400">
                 {section}
               </p>
               <nav className="space-y-1">
@@ -355,8 +355,8 @@ export function EmployeeWorkspace({ userName, snapshot }: EmployeeWorkspaceProps
                     <button
                       className={
                         item.active
-                          ? "flex w-full items-center rounded-r-lg border-l-4 border-blue-700 bg-white px-3 py-2 text-left text-sm font-medium text-gray-900"
-                          : "flex w-full items-center rounded-r-lg border-l-4 border-transparent px-3 py-2 text-left text-sm text-gray-600"
+                          ? "flex w-full items-center rounded-r-lg border-l-4 border-blue-700 bg-white px-3 py-2 text-left text-[14px] font-medium text-gray-900"
+                          : "flex w-full items-center rounded-r-lg border-l-4 border-transparent px-3 py-2 text-left text-[14px] text-gray-600"
                       }
                       key={item.label}
                       type="button"
@@ -371,7 +371,7 @@ export function EmployeeWorkspace({ userName, snapshot }: EmployeeWorkspaceProps
 
         <div className="border-t border-gray-200 px-4 py-4">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-100 text-sm font-semibold text-blue-700">
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-100 text-[14px] font-semibold text-blue-700">
               {userName
                 .split(" ")
                 .map((part) => part[0])
@@ -379,8 +379,8 @@ export function EmployeeWorkspace({ userName, snapshot }: EmployeeWorkspaceProps
                 .slice(0, 2)}
             </div>
             <div>
-              <p className="text-sm font-semibold text-gray-900">{userName}</p>
-              <p className="text-sm text-gray-500">Employee</p>
+              <p className="text-[13px] font-medium text-gray-900">{userName}</p>
+              <p className="text-[11px] text-gray-400">Employee</p>
             </div>
           </div>
         </div>
@@ -390,18 +390,18 @@ export function EmployeeWorkspace({ userName, snapshot }: EmployeeWorkspaceProps
         <div className="border-b border-gray-200 bg-white px-10 py-6">
           <div className="flex items-start justify-between gap-6">
             <div>
-              <h1 className="text-3xl font-semibold tracking-tight text-gray-900">{pageTitle}</h1>
-              <p className="mt-1 text-sm text-gray-500">{cycleMeta}</p>
+              <h1 className="text-[22px] font-medium tracking-tight text-gray-900">{pageTitle}</h1>
+              <p className="mt-1 text-[13px] text-gray-500">{cycleMeta}</p>
             </div>
             <div className="flex items-center gap-3">
               <button
-                className="rounded-xl border border-gray-300 bg-white px-5 py-3 text-sm font-medium text-gray-700"
+                className="rounded-xl border border-gray-300 bg-white px-5 py-3 text-[13px] font-medium text-gray-700"
                 type="button"
               >
                 Export
               </button>
               <button
-                className="rounded-xl bg-blue-700 px-5 py-3 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:bg-blue-300"
+                className="rounded-xl bg-blue-700 px-5 py-3 text-[13px] font-semibold text-white disabled:cursor-not-allowed disabled:bg-blue-300"
                 disabled={activeTab !== "goal-sheet" ? !activeQuarterMeta?.isOpen : !canSubmit}
                 onClick={activeTab === "goal-sheet" ? submitGoalSheet : undefined}
                 type="button"
@@ -416,8 +416,8 @@ export function EmployeeWorkspace({ userName, snapshot }: EmployeeWorkspaceProps
               <button
                 className={
                   activeTab === tab.id
-                    ? "border-b-2 border-blue-700 pb-4 text-left text-sm font-semibold text-blue-700"
-                    : "border-b-2 border-transparent pb-4 text-left text-sm font-medium text-gray-500"
+                    ? "border-b-2 border-blue-700 pb-4 text-left text-[14px] font-semibold text-blue-700"
+                    : "border-b-2 border-transparent pb-4 text-left text-[14px] font-medium text-gray-500"
                 }
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
@@ -434,28 +434,28 @@ export function EmployeeWorkspace({ userName, snapshot }: EmployeeWorkspaceProps
             <div className="space-y-6 pb-32">
               <div className="grid gap-4 md:grid-cols-3">
                 <div className="rounded-lg border border-gray-200 bg-gray-50 p-5">
-                  <p className="text-4xl font-semibold text-gray-900">{totalWeightage}%</p>
-                  <p className="mt-2 text-sm text-gray-500">Total weightage</p>
+                  <p className="text-[28px] font-medium text-gray-900">{totalWeightage}%</p>
+                  <p className="mt-2 text-[13px] text-gray-500">Total weightage</p>
                   <span
-                    className={`mt-3 inline-flex rounded-full px-3 py-1 text-xs font-medium ${getStatTone(weightValid)}`}
+                    className={`mt-3 inline-flex rounded-full px-3 py-1 text-[11px] font-medium ${getStatTone(weightValid)}`}
                   >
                     {weightValid ? "Valid" : "Must equal 100%"}
                   </span>
                 </div>
                 <div className="rounded-lg border border-gray-200 bg-gray-50 p-5">
-                  <p className="text-4xl font-semibold text-gray-900">{goalCount} / 8</p>
-                  <p className="mt-2 text-sm text-gray-500">Goal count</p>
+                  <p className="text-[28px] font-medium text-gray-900">{goalCount} / 8</p>
+                  <p className="mt-2 text-[13px] text-gray-500">Goal count</p>
                   <span
-                    className={`mt-3 inline-flex rounded-full px-3 py-1 text-xs font-medium ${getStatTone(goalCountValid)}`}
+                    className={`mt-3 inline-flex rounded-full px-3 py-1 text-[11px] font-medium ${getStatTone(goalCountValid)}`}
                   >
                     {goalCountValid ? "Within limit" : "Goal limit exceeded"}
                   </span>
                 </div>
                 <div className="rounded-lg border border-gray-200 bg-gray-50 p-5">
-                  <p className="text-4xl font-semibold text-gray-900">{sheetStatus}</p>
-                  <p className="mt-2 text-sm text-gray-500">Sheet status</p>
+                  <p className="text-[28px] font-medium text-gray-900">{sheetStatus}</p>
+                  <p className="mt-2 text-[13px] text-gray-500">Sheet status</p>
                   <span
-                    className={`mt-3 inline-flex rounded-full px-3 py-1 text-xs font-medium ${getSheetStatusTone(sheetStatus)}`}
+                    className={`mt-3 inline-flex rounded-full px-3 py-1 text-[11px] font-medium ${getSheetStatusTone(sheetStatus)}`}
                   >
                     {sheetStatus === "Draft"
                       ? "Pending submit"
@@ -469,16 +469,16 @@ export function EmployeeWorkspace({ userName, snapshot }: EmployeeWorkspaceProps
               <div className="rounded-xl border border-gray-200 bg-white p-6">
                 <div className="mb-5 flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-semibold text-gray-900">
+                    <p className="text-[15px] font-medium text-gray-900">
                       {editingGoalId ? "Edit goal" : "Create goal"}
                     </p>
-                    <p className="mt-1 text-sm text-gray-500">
+                    <p className="mt-1 text-[13px] text-gray-500">
                       Fill the goal details below. Shared goals keep title and target read-only.
                     </p>
                   </div>
                   {(editingGoalId || goalDraft.title || goalDraft.description || goalDraft.thrustArea) && (
                     <button
-                      className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-600"
+                      className="rounded-lg border border-gray-300 px-4 py-2 text-[13px] font-medium text-gray-600"
                       onClick={resetDraft}
                       type="button"
                     >
@@ -488,10 +488,10 @@ export function EmployeeWorkspace({ userName, snapshot }: EmployeeWorkspaceProps
                 </div>
 
                 <div className="grid gap-4 md:grid-cols-2">
-                  <label className="space-y-2 text-sm font-medium text-gray-700">
-                    <span>Goal title</span>
+                  <label className="space-y-2">
+                    <span className="text-[12px] uppercase tracking-[0.04em] text-gray-400">Goal title</span>
                     <input
-                      className="w-full rounded-lg border border-gray-200 px-4 py-3 text-sm outline-none ring-0 focus:border-blue-700 focus:ring-2 focus:ring-blue-100 disabled:bg-gray-50"
+                      className="w-full rounded-lg border border-gray-200 px-4 py-3 text-[14px] outline-none ring-0 focus:border-blue-700 focus:ring-2 focus:ring-blue-100 disabled:bg-gray-50"
                       disabled={sheetStatus !== "Draft" || goalDraft.shared}
                       onChange={(event) =>
                         setGoalDraft((current) => ({ ...current, title: event.target.value }))
@@ -499,10 +499,10 @@ export function EmployeeWorkspace({ userName, snapshot }: EmployeeWorkspaceProps
                       value={goalDraft.title}
                     />
                   </label>
-                  <label className="space-y-2 text-sm font-medium text-gray-700">
-                    <span>Thrust area</span>
+                  <label className="space-y-2">
+                    <span className="text-[12px] uppercase tracking-[0.04em] text-gray-400">Thrust area</span>
                     <input
-                      className="w-full rounded-lg border border-gray-200 px-4 py-3 text-sm outline-none ring-0 focus:border-blue-700 focus:ring-2 focus:ring-blue-100 disabled:bg-gray-50"
+                      className="w-full rounded-lg border border-gray-200 px-4 py-3 text-[14px] outline-none ring-0 focus:border-blue-700 focus:ring-2 focus:ring-blue-100 disabled:bg-gray-50"
                       disabled={sheetStatus !== "Draft"}
                       onChange={(event) =>
                         setGoalDraft((current) => ({ ...current, thrustArea: event.target.value }))
@@ -510,10 +510,10 @@ export function EmployeeWorkspace({ userName, snapshot }: EmployeeWorkspaceProps
                       value={goalDraft.thrustArea}
                     />
                   </label>
-                  <label className="space-y-2 text-sm font-medium text-gray-700">
-                    <span>Unit of measure</span>
+                  <label className="space-y-2">
+                    <span className="text-[12px] uppercase tracking-[0.04em] text-gray-400">Unit of measure</span>
                     <select
-                      className="w-full rounded-lg border border-gray-200 px-4 py-3 text-sm outline-none ring-0 focus:border-blue-700 focus:ring-2 focus:ring-blue-100 disabled:bg-gray-50"
+                      className="w-full rounded-lg border border-gray-200 px-4 py-3 text-[14px] outline-none ring-0 focus:border-blue-700 focus:ring-2 focus:ring-blue-100 disabled:bg-gray-50"
                       disabled={sheetStatus !== "Draft"}
                       onChange={(event) =>
                         setGoalDraft((current) => ({
@@ -530,10 +530,10 @@ export function EmployeeWorkspace({ userName, snapshot }: EmployeeWorkspaceProps
                       ))}
                     </select>
                   </label>
-                  <label className="space-y-2 text-sm font-medium text-gray-700">
-                    <span>Target</span>
+                  <label className="space-y-2">
+                    <span className="text-[12px] uppercase tracking-[0.04em] text-gray-400">Target</span>
                     <input
-                      className="w-full rounded-lg border border-gray-200 px-4 py-3 text-sm outline-none ring-0 focus:border-blue-700 focus:ring-2 focus:ring-blue-100 disabled:bg-gray-50"
+                      className="w-full rounded-lg border border-gray-200 px-4 py-3 text-[14px] outline-none ring-0 focus:border-blue-700 focus:ring-2 focus:ring-blue-100 disabled:bg-gray-50"
                       disabled={sheetStatus !== "Draft" || goalDraft.shared}
                       onChange={(event) =>
                         setGoalDraft((current) => ({ ...current, target: event.target.value }))
@@ -542,10 +542,10 @@ export function EmployeeWorkspace({ userName, snapshot }: EmployeeWorkspaceProps
                       value={goalDraft.target}
                     />
                   </label>
-                  <label className="space-y-2 text-sm font-medium text-gray-700">
-                    <span>Weightage (%)</span>
+                  <label className="space-y-2">
+                    <span className="text-[12px] uppercase tracking-[0.04em] text-gray-400">Weightage (%)</span>
                     <input
-                      className="w-full rounded-lg border border-gray-200 px-4 py-3 text-sm outline-none ring-0 focus:border-blue-700 focus:ring-2 focus:ring-blue-100 disabled:bg-gray-50"
+                      className="w-full rounded-lg border border-gray-200 px-4 py-3 text-[14px] outline-none ring-0 focus:border-blue-700 focus:ring-2 focus:ring-blue-100 disabled:bg-gray-50"
                       disabled={sheetStatus !== "Draft"}
                       min={10}
                       onChange={(event) =>
@@ -558,7 +558,7 @@ export function EmployeeWorkspace({ userName, snapshot }: EmployeeWorkspaceProps
                       value={goalDraft.weight}
                     />
                   </label>
-                  <label className="flex items-end gap-3 rounded-lg border border-dashed border-gray-300 px-4 py-3 text-sm text-gray-600">
+                  <label className="flex items-end gap-3 rounded-lg border border-dashed border-gray-300 px-4 py-3 text-[13px] text-gray-600">
                     <input
                       checked={goalDraft.shared}
                       className="h-4 w-4 rounded border-gray-300 text-blue-700 focus:ring-blue-200"
@@ -575,10 +575,10 @@ export function EmployeeWorkspace({ userName, snapshot }: EmployeeWorkspaceProps
                   </label>
                 </div>
 
-                <label className="mt-4 block space-y-2 text-sm font-medium text-gray-700">
-                  <span>Description</span>
+                <label className="mt-4 block space-y-2">
+                  <span className="text-[12px] uppercase tracking-[0.04em] text-gray-400">Description</span>
                   <textarea
-                    className="min-h-28 w-full rounded-lg border border-gray-200 px-4 py-3 text-sm outline-none ring-0 focus:border-blue-700 focus:ring-2 focus:ring-blue-100 disabled:bg-gray-50"
+                    className="min-h-28 w-full rounded-lg border border-gray-200 px-4 py-3 text-[14px] outline-none ring-0 focus:border-blue-700 focus:ring-2 focus:ring-blue-100 disabled:bg-gray-50"
                     disabled={sheetStatus !== "Draft"}
                     onChange={(event) =>
                       setGoalDraft((current) => ({ ...current, description: event.target.value }))
@@ -588,13 +588,13 @@ export function EmployeeWorkspace({ userName, snapshot }: EmployeeWorkspaceProps
                 </label>
 
                 <div className="mt-5 flex flex-wrap items-center justify-between gap-3">
-                  <div className="rounded-lg bg-gray-50 px-4 py-3 text-sm text-gray-600">
+                  <div className="rounded-lg bg-gray-50 px-4 py-3 text-[13px] text-gray-600">
                     {goalDraft.shared
                       ? "Shared goal: title and target stay read-only for recipient view."
                       : `UoM preview: ${getUomCopy(goalDraft.unit)}`}
                   </div>
                   <button
-                    className="rounded-lg bg-blue-700 px-5 py-3 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:bg-blue-300"
+                    className="rounded-lg bg-blue-700 px-5 py-3 text-[13px] font-semibold text-white disabled:cursor-not-allowed disabled:bg-blue-300"
                     disabled={
                       sheetStatus !== "Draft" ||
                       !goalDraft.title.trim() ||
@@ -621,38 +621,38 @@ export function EmployeeWorkspace({ userName, snapshot }: EmployeeWorkspaceProps
                       <div>
                         <div className="flex items-center gap-2">
                           {goal.shared ? <span className="h-2.5 w-2.5 rounded-full bg-blue-600" /> : null}
-                          <h3 className="text-2xl font-semibold tracking-tight text-gray-900">{goal.title}</h3>
+                          <h3 className="text-[15px] font-medium tracking-tight text-gray-900">{goal.title}</h3>
                         </div>
-                        <p className="mt-1 text-sm text-gray-500">
+                        <p className="mt-1 text-[13px] text-gray-400">
                           Thrust area: {goal.thrustArea}
                           {goal.shared ? " · Shared by admin" : ""}
                         </p>
                       </div>
                       <div className="flex items-center gap-2">
-                        <span className="rounded-full bg-blue-50 px-3 py-1 text-sm font-semibold text-blue-700">
+                        <span className="rounded-full bg-blue-50 px-3 py-1 text-[12px] font-semibold text-blue-700">
                           {goal.weight}%
                         </span>
                         <span
-                          className={`rounded-full px-3 py-1 text-xs font-medium ${getGoalCardStatusTone(goal.state)}`}
+                          className={`rounded-full px-3 py-1 text-[11px] font-medium ${getGoalCardStatusTone(goal.state)}`}
                         >
                           {goal.state}
                         </span>
                       </div>
                     </div>
 
-                    <div className="mt-5 grid gap-4 text-sm md:grid-cols-3">
+                    <div className="mt-5 grid gap-4 text-base md:grid-cols-3">
                       <div>
-                        <p className="text-xs font-semibold uppercase tracking-[0.16em] text-gray-400">
+                        <p className="text-[12px] font-semibold uppercase tracking-[0.04em] text-gray-400">
                           Unit of Measure
                         </p>
                         <p className="mt-2 font-medium text-gray-900">{getUomCopy(goal.unit)}</p>
                       </div>
                       <div>
-                        <p className="text-xs font-semibold uppercase tracking-[0.16em] text-gray-400">Target</p>
+                        <p className="text-[12px] font-semibold uppercase tracking-[0.04em] text-gray-400">Target</p>
                         <p className="mt-2 font-medium text-gray-900">{goal.target}</p>
                       </div>
                       <div>
-                        <p className="text-xs font-semibold uppercase tracking-[0.16em] text-gray-400">
+                        <p className="text-[12px] font-semibold uppercase tracking-[0.04em] text-gray-400">
                           Shared Goal
                         </p>
                         <p className="mt-2 font-medium text-gray-900">
@@ -664,7 +664,7 @@ export function EmployeeWorkspace({ userName, snapshot }: EmployeeWorkspaceProps
                     {sheetStatus === "Draft" ? (
                       <div className="mt-5 flex justify-end">
                         <span
-                          className="text-sm font-medium text-rose-600"
+                          className="text-[13px] font-medium text-rose-600"
                           onClick={(event) => {
                             event.stopPropagation();
                             removeGoal(goal.id);
@@ -681,7 +681,7 @@ export function EmployeeWorkspace({ userName, snapshot }: EmployeeWorkspaceProps
 
                 {goalCount < 8 ? (
                   <button
-                    className="flex w-full items-center justify-center rounded-xl border border-dashed border-gray-300 bg-white px-6 py-5 text-base font-medium text-gray-500"
+                    className="flex w-full items-center justify-center rounded-xl border border-dashed border-gray-300 bg-white px-6 py-5 text-[13px] font-medium text-gray-500"
                     onClick={() => startCreateGoal(false)}
                     type="button"
                   >
@@ -692,14 +692,14 @@ export function EmployeeWorkspace({ userName, snapshot }: EmployeeWorkspaceProps
 
               <div className="sticky bottom-0 flex items-center justify-between gap-4 rounded-t-xl border border-gray-200 bg-white px-6 py-4">
                 <p
-                  className={`text-sm font-medium ${
+                  className={`text-[12px] font-medium ${
                     canSubmit ? "text-emerald-700" : "text-rose-700"
                   }`}
                 >
                   {goalSheetValidationMessage}
                 </p>
                 <button
-                  className="rounded-xl bg-blue-700 px-6 py-3 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:bg-blue-300"
+                  className="rounded-xl bg-blue-700 px-6 py-3 text-[13px] font-semibold text-white disabled:cursor-not-allowed disabled:bg-blue-300"
                   disabled={!canSubmit}
                   onClick={submitGoalSheet}
                   type="button"
@@ -741,7 +741,7 @@ function QuarterView({
   return (
     <div className="space-y-6 pb-10">
       {!meta.isOpen ? (
-        <div className="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm font-medium text-amber-800">
+        <div className="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-[12px] font-medium text-amber-800">
           Check-in window opens {meta.label}
         </div>
       ) : null}
@@ -751,47 +751,47 @@ function QuarterView({
           <article className="rounded-xl border border-gray-200 bg-white p-6" key={checkIn.id}>
             <div className="flex items-start justify-between gap-4">
               <div>
-                <h3 className="text-xl font-semibold text-gray-900">{checkIn.goalTitle}</h3>
-                <p className="mt-1 text-sm text-gray-500">
+                <h3 className="text-[15px] font-medium text-gray-900">{checkIn.goalTitle}</h3>
+                <p className="mt-1 text-[13px] text-gray-400">
                   Goal-linked quarterly update
                   {checkIn.readOnly ? " · Achievement updates come from the primary owner" : ""}
                 </p>
               </div>
-              <span className="rounded-full bg-gray-100 px-3 py-1 text-xs font-medium text-gray-700">
+              <span className="rounded-full bg-gray-100 px-3 py-1 text-[11px] font-medium text-gray-700">
                 {checkIn.status}
               </span>
             </div>
 
             {checkIn.readOnly ? (
-              <div className="mt-4 rounded-lg border border-blue-200 bg-blue-50 px-4 py-3 text-sm text-blue-700">
+              <div className="mt-4 rounded-lg border border-blue-200 bg-blue-50 px-4 py-3 text-[12px] text-blue-700">
                 This is a shared goal. Planned achievement, actual achievement, and progress updates
                 are read-only in the recipient view.
               </div>
             ) : null}
 
             <div className="mt-5 grid gap-4 md:grid-cols-3">
-              <label className="space-y-2 text-sm font-medium text-gray-700">
-                <span>Planned Achievement</span>
+              <label className="space-y-2">
+                <span className="text-[12px] uppercase tracking-[0.04em] text-gray-400">Planned Achievement</span>
                 <input
-                  className="w-full rounded-lg border border-gray-200 px-4 py-3 text-sm outline-none focus:border-blue-700 focus:ring-2 focus:ring-blue-100 disabled:bg-gray-50"
+                  className="w-full rounded-lg border border-gray-200 px-4 py-3 text-[14px] outline-none focus:border-blue-700 focus:ring-2 focus:ring-blue-100 disabled:bg-gray-50"
                   disabled={!meta.isOpen || checkIn.readOnly}
                   onChange={(event) => onChange(tab, checkIn.id, "planned", event.target.value)}
                   value={checkIn.planned}
                 />
               </label>
-              <label className="space-y-2 text-sm font-medium text-gray-700">
-                <span>Actual Achievement</span>
+              <label className="space-y-2">
+                <span className="text-[12px] uppercase tracking-[0.04em] text-gray-400">Actual Achievement</span>
                 <input
-                  className="w-full rounded-lg border border-gray-200 px-4 py-3 text-sm outline-none focus:border-blue-700 focus:ring-2 focus:ring-blue-100 disabled:bg-gray-50"
+                  className="w-full rounded-lg border border-gray-200 px-4 py-3 text-[14px] outline-none focus:border-blue-700 focus:ring-2 focus:ring-blue-100 disabled:bg-gray-50"
                   disabled={!meta.isOpen || checkIn.readOnly}
                   onChange={(event) => onChange(tab, checkIn.id, "actual", event.target.value)}
                   value={checkIn.actual}
                 />
               </label>
-              <label className="space-y-2 text-sm font-medium text-gray-700">
-                <span>Progress Status</span>
+              <label className="space-y-2">
+                <span className="text-[12px] uppercase tracking-[0.04em] text-gray-400">Progress Status</span>
                 <select
-                  className="w-full rounded-lg border border-gray-200 px-4 py-3 text-sm outline-none focus:border-blue-700 focus:ring-2 focus:ring-blue-100 disabled:bg-gray-50"
+                  className="w-full rounded-lg border border-gray-200 px-4 py-3 text-[14px] outline-none focus:border-blue-700 focus:ring-2 focus:ring-blue-100 disabled:bg-gray-50"
                   disabled={!meta.isOpen || checkIn.readOnly}
                   onChange={(event) => onChange(tab, checkIn.id, "status", event.target.value)}
                   value={checkIn.status}
@@ -805,10 +805,10 @@ function QuarterView({
               </label>
             </div>
 
-            <label className="mt-4 block space-y-2 text-sm font-medium text-gray-700">
-              <span>Employee Update Note</span>
+            <label className="mt-4 block space-y-2">
+              <span className="text-[12px] uppercase tracking-[0.04em] text-gray-400">Employee Update Note</span>
               <textarea
-                className="min-h-28 w-full rounded-lg border border-gray-200 px-4 py-3 text-sm outline-none focus:border-blue-700 focus:ring-2 focus:ring-blue-100 disabled:bg-gray-50"
+                className="min-h-28 w-full rounded-lg border border-gray-200 px-4 py-3 text-[14px] outline-none focus:border-blue-700 focus:ring-2 focus:ring-blue-100 disabled:bg-gray-50"
                 disabled={!meta.isOpen || checkIn.readOnly}
                 onChange={(event) => onChange(tab, checkIn.id, "comment", event.target.value)}
                 value={checkIn.comment}
@@ -820,7 +820,7 @@ function QuarterView({
 
       <div className="flex justify-end">
         <button
-          className="rounded-xl bg-blue-700 px-6 py-3 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:bg-blue-300"
+          className="rounded-xl bg-blue-700 px-6 py-3 text-[13px] font-semibold text-white disabled:cursor-not-allowed disabled:bg-blue-300"
           disabled={!meta.isOpen}
           type="button"
         >

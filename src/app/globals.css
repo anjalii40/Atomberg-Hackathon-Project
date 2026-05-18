@@ -19,6 +19,7 @@
 }
 
 html {
+  font-size: 15px;
   background:
     radial-gradient(circle at top left, rgba(216, 162, 38, 0.16), transparent 24%),
     linear-gradient(180deg, #f2ede2 0%, #f8f5ee 100%);
@@ -28,6 +29,8 @@ body {
   margin: 0;
   color: var(--ink-strong);
   font-family: "Avenir Next", "Trebuchet MS", sans-serif;
+  font-size: 0.9375rem;
+  line-height: 1.6;
 }
 
 a {
@@ -185,6 +188,9 @@ li {
   display: grid;
   gap: 8px;
   color: var(--ink-soft);
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
 }
 
 .auth-form input {
@@ -195,6 +201,7 @@ li {
   background: #fffdf9;
   color: var(--ink-strong);
   font: inherit;
+  font-size: 0.875rem;
 }
 
 .auth-form select {
@@ -205,6 +212,7 @@ li {
   background: #fffdf9;
   color: var(--ink-strong);
   font: inherit;
+  font-size: 0.875rem;
 }
 
 .auth-button {
@@ -230,6 +238,7 @@ li {
   color: var(--ink-soft);
   cursor: pointer;
   font: inherit;
+  font-size: 0.8125rem;
 }
 
 .auth-toggle.active {
@@ -243,7 +252,7 @@ li {
   border-radius: 14px;
   background: rgba(160, 69, 69, 0.12);
   color: var(--rose);
-  font-size: 0.95rem;
+  font-size: 0.8125rem;
 }
 
 .demo-credentials {
@@ -749,6 +758,7 @@ td p,
   border: 0;
   border-radius: 999px;
   font: inherit;
+  font-size: 0.8125rem;
   cursor: pointer;
 }
 

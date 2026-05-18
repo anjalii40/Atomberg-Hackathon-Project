@@ -67,13 +67,13 @@ export function AdminWorkspace({ userName, snapshot }: AdminWorkspaceProps) {
       <aside className="fixed left-0 top-0 flex h-screen w-[200px] flex-col border-r border-gray-200 bg-[#f6f3ec]">
         <div className="border-b border-gray-200 px-5 py-6">
           <p className="text-2xl font-semibold tracking-tight text-gray-900">AtomQuest</p>
-          <p className="mt-1 text-sm text-gray-500">FY26 Goal Cycle</p>
+          <p className="mt-1 text-[13px] text-gray-500">FY26 Goal Cycle</p>
         </div>
 
         <div className="flex-1 overflow-y-auto px-4 py-6">
           {["WORKSPACE", "PROGRESS"].map((section) => (
             <div className="mb-6" key={section}>
-              <p className="mb-3 px-2 text-xs font-semibold uppercase tracking-[0.18em] text-gray-400">
+              <p className="mb-3 px-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-gray-400">
                 {section}
               </p>
               <nav className="space-y-1">
@@ -83,8 +83,8 @@ export function AdminWorkspace({ userName, snapshot }: AdminWorkspaceProps) {
                     <button
                       className={
                         item.active
-                          ? "flex w-full items-center rounded-r-lg border-l-4 border-blue-700 bg-white px-3 py-2 text-left text-sm font-medium text-gray-900"
-                          : "flex w-full items-center rounded-r-lg border-l-4 border-transparent px-3 py-2 text-left text-sm text-gray-600"
+                          ? "flex w-full items-center rounded-r-lg border-l-4 border-blue-700 bg-white px-3 py-2 text-left text-[14px] font-medium text-gray-900"
+                          : "flex w-full items-center rounded-r-lg border-l-4 border-transparent px-3 py-2 text-left text-[14px] text-gray-600"
                       }
                       key={item.label}
                       type="button"
@@ -99,7 +99,7 @@ export function AdminWorkspace({ userName, snapshot }: AdminWorkspaceProps) {
 
         <div className="border-t border-gray-200 px-4 py-4">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-100 text-sm font-semibold text-blue-700">
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-100 text-[14px] font-semibold text-blue-700">
               {userName
                 .split(" ")
                 .map((part) => part[0])
@@ -107,8 +107,8 @@ export function AdminWorkspace({ userName, snapshot }: AdminWorkspaceProps) {
                 .slice(0, 2)}
             </div>
             <div>
-              <p className="text-sm font-semibold text-gray-900">{userName}</p>
-              <p className="text-sm text-gray-500">Admin / HR</p>
+              <p className="text-[13px] font-medium text-gray-900">{userName}</p>
+              <p className="text-[11px] text-gray-400">Admin / HR</p>
             </div>
           </div>
         </div>
@@ -118,12 +118,12 @@ export function AdminWorkspace({ userName, snapshot }: AdminWorkspaceProps) {
         <div className="border-b border-gray-200 bg-white px-10 py-6">
           <div className="flex items-start justify-between gap-6">
             <div>
-              <h1 className="text-3xl font-semibold tracking-tight text-gray-900">Admin workspace</h1>
-              <p className="mt-1 text-sm text-gray-500">FY26 · Governance, reporting, and analytics</p>
+              <h1 className="text-[22px] font-medium tracking-tight text-gray-900">Admin workspace</h1>
+              <p className="mt-1 text-[13px] text-gray-500">FY26 · Governance, reporting, and analytics</p>
             </div>
             <div className="flex items-center gap-3">
               <button
-                className="rounded-xl border border-gray-300 bg-white px-5 py-3 text-sm font-medium text-gray-700"
+                className="rounded-xl border border-gray-300 bg-white px-5 py-3 text-[13px] font-medium text-gray-700"
                 type="button"
               >
                 Export
@@ -137,8 +137,8 @@ export function AdminWorkspace({ userName, snapshot }: AdminWorkspaceProps) {
               <button
                 className={
                   activeTab === tab.id
-                    ? "border-b-2 border-blue-700 pb-4 text-left text-sm font-semibold text-blue-700"
-                    : "border-b-2 border-transparent pb-4 text-left text-sm font-medium text-gray-500"
+                    ? "border-b-2 border-blue-700 pb-4 text-left text-[14px] font-semibold text-blue-700"
+                    : "border-b-2 border-transparent pb-4 text-left text-[14px] font-medium text-gray-500"
                 }
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
@@ -180,25 +180,25 @@ export function AdminWorkspace({ userName, snapshot }: AdminWorkspaceProps) {
                     <article className="rounded-xl border border-gray-200 bg-white p-6" key={request.id}>
                       <div className="flex items-start justify-between gap-4">
                         <div>
-                          <h2 className="text-xl font-semibold text-gray-900">{request.employeeName}</h2>
-                          <p className="mt-1 text-sm text-gray-500">{request.requestedAt}</p>
+                          <h2 className="text-[15px] font-medium text-gray-900">{request.employeeName}</h2>
+                          <p className="mt-1 text-[13px] text-gray-500">{request.requestedAt}</p>
                         </div>
-                        <span className={`rounded-full px-3 py-1 text-xs font-medium ${getRequestTone(request.status)}`}>
+                        <span className={`rounded-full px-3 py-1 text-[11px] font-medium ${getRequestTone(request.status)}`}>
                           {request.status}
                         </span>
                       </div>
-                      <p className="mt-4 text-sm text-gray-600">{request.reason}</p>
+                      <p className="mt-4 text-[13px] text-gray-600">{request.reason}</p>
                       {request.status === "Pending" ? (
                         <div className="mt-5 flex items-center gap-3">
                           <button
-                            className="rounded-xl border border-gray-300 bg-white px-5 py-3 text-sm font-medium text-gray-700"
+                            className="rounded-xl border border-gray-300 bg-white px-5 py-3 text-[13px] font-medium text-gray-700"
                             onClick={() => updateRequest(request.id, "Declined")}
                             type="button"
                           >
                             Decline
                           </button>
                           <button
-                            className="rounded-xl bg-blue-700 px-5 py-3 text-sm font-semibold text-white"
+                            className="rounded-xl bg-blue-700 px-5 py-3 text-[13px] font-semibold text-white"
                             onClick={() => updateRequest(request.id, "Approved")}
                             type="button"
                           >
@@ -263,9 +263,9 @@ function StatCard({
 
   return (
     <div className="rounded-lg border border-gray-200 bg-gray-50 p-5">
-      <p className="text-4xl font-semibold text-gray-900">{value}</p>
-      <p className="mt-2 text-sm text-gray-500">{label}</p>
-      <span className={`mt-3 inline-flex rounded-full px-3 py-1 text-xs font-medium ${toneClass}`}>
+      <p className="text-[28px] font-medium text-gray-900">{value}</p>
+      <p className="mt-2 text-[13px] text-gray-500">{label}</p>
+      <span className={`mt-3 inline-flex rounded-full px-3 py-1 text-[11px] font-medium ${toneClass}`}>
         {helper}
       </span>
     </div>
@@ -287,14 +287,14 @@ function CycleCard({
     <article className="rounded-xl border border-gray-200 bg-white p-6">
       <div className="flex items-start justify-between gap-4">
         <div>
-          <h2 className="text-lg font-semibold text-gray-900">{title}</h2>
-          <p className="mt-1 text-sm text-gray-500">{label}</p>
+          <h2 className="text-[15px] font-medium text-gray-900">{title}</h2>
+          <p className="mt-1 text-[13px] text-gray-500">{label}</p>
         </div>
-        <span className="rounded-full bg-blue-50 px-3 py-1 text-xs font-medium text-blue-700">
+        <span className="rounded-full bg-blue-50 px-3 py-1 text-[11px] font-medium text-blue-700">
           {status}
         </span>
       </div>
-      <p className="mt-4 text-sm text-gray-600">{detail}</p>
+      <p className="mt-4 text-[13px] text-gray-600">{detail}</p>
     </article>
   );
 }
@@ -303,16 +303,16 @@ function ReportingTable({ rows }: { rows: ReportRow[] }) {
   return (
     <div className="rounded-xl border border-gray-200 bg-white">
       <div className="border-b border-gray-200 px-6 py-5">
-        <h2 className="text-xl font-semibold text-gray-900">Planned vs Actual</h2>
-        <p className="mt-1 text-sm text-gray-500">Export-ready achievement summary by employee and goal.</p>
+        <h2 className="text-[15px] font-medium text-gray-900">Planned vs Actual</h2>
+        <p className="mt-1 text-[13px] text-gray-500">Export-ready achievement summary by employee and goal.</p>
       </div>
       <div className="overflow-x-auto">
-        <table className="min-w-full divide-y divide-gray-200 text-sm">
+        <table className="min-w-full divide-y divide-gray-200 text-base">
           <thead className="bg-gray-50">
             <tr>
               {["Employee", "Goal", "Target", "Actual", "Status"].map((heading) => (
                 <th
-                  className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-[0.16em] text-gray-400"
+                  className="px-6 py-4 text-left text-[12px] font-semibold uppercase tracking-[0.04em] text-gray-400"
                   key={heading}
                 >
                   {heading}
@@ -328,7 +328,7 @@ function ReportingTable({ rows }: { rows: ReportRow[] }) {
                 <td className="px-6 py-4 text-gray-600">{row.target}</td>
                 <td className="px-6 py-4 text-gray-600">{row.actual}</td>
                 <td className="px-6 py-4">
-                  <span className="rounded-full bg-gray-100 px-3 py-1 text-xs font-medium text-gray-700">
+                  <span className="rounded-full bg-gray-100 px-3 py-1 text-[11px] font-medium text-gray-700">
                     {row.status}
                   </span>
                 </td>
@@ -348,12 +348,12 @@ function AuditList({ events }: { events: AuditEvent[] }) {
         <article className="rounded-xl border border-gray-200 bg-white p-6" key={event.id}>
           <div className="flex items-start justify-between gap-4">
             <div>
-              <h2 className="text-lg font-semibold text-gray-900">{event.actor}</h2>
-              <p className="mt-1 text-sm text-gray-500">
+              <h2 className="text-[15px] font-medium text-gray-900">{event.actor}</h2>
+              <p className="mt-1 text-[13px] text-gray-500">
                 {event.action} on {event.target}
               </p>
             </div>
-            <span className="text-sm text-gray-500">{event.timestamp}</span>
+            <span className="text-[13px] text-gray-500">{event.timestamp}</span>
           </div>
         </article>
       ))}
@@ -367,8 +367,8 @@ function AdminAnalytics({ analytics }: { analytics: AnalyticsSnapshot }) {
       <div className="grid gap-4 lg:grid-cols-2">
         <article className="rounded-xl border border-gray-200 bg-white p-6">
           <div className="mb-6">
-            <p className="text-sm font-semibold text-gray-900">QoQ trend</p>
-            <p className="mt-1 text-sm text-gray-500">Organization achievement trend by quarter</p>
+            <p className="text-[15px] font-medium text-gray-900">QoQ trend</p>
+            <p className="mt-1 text-[13px] text-gray-500">Organization achievement trend by quarter</p>
           </div>
           <div className="flex items-end justify-between gap-4">
             {analytics.quarterlyTrends.map((point) => (
@@ -379,8 +379,8 @@ function AdminAnalytics({ analytics }: { analytics: AnalyticsSnapshot }) {
                     style={{ height: `${point.value}%` }}
                   />
                 </div>
-                <p className="text-sm font-semibold text-gray-900">{point.value}%</p>
-                <p className="text-sm text-gray-500">{point.label}</p>
+                <p className="text-base font-medium text-gray-900">{point.value}%</p>
+                <p className="text-[13px] text-gray-500">{point.label}</p>
               </div>
             ))}
           </div>
@@ -388,13 +388,13 @@ function AdminAnalytics({ analytics }: { analytics: AnalyticsSnapshot }) {
 
         <article className="rounded-xl border border-gray-200 bg-white p-6">
           <div className="mb-6">
-            <p className="text-sm font-semibold text-gray-900">Goal distribution</p>
-            <p className="mt-1 text-sm text-gray-500">Current spread by thrust area</p>
+            <p className="text-[15px] font-medium text-gray-900">Goal distribution</p>
+            <p className="mt-1 text-[13px] text-gray-500">Current spread by thrust area</p>
           </div>
           <div className="space-y-4">
             {analytics.goalDistribution.map((row) => (
               <div key={row.label}>
-                <div className="mb-2 flex items-center justify-between gap-4 text-sm">
+                <div className="mb-2 flex items-center justify-between gap-4 text-base">
                   <span className="font-medium text-gray-900">{row.label}</span>
                   <span className="text-gray-500">{row.value}%</span>
                 </div>
@@ -412,15 +412,15 @@ function AdminAnalytics({ analytics }: { analytics: AnalyticsSnapshot }) {
 
       <article className="rounded-xl border border-gray-200 bg-white p-6">
         <div className="mb-6">
-          <p className="text-sm font-semibold text-gray-900">Manager effectiveness</p>
-          <p className="mt-1 text-sm text-gray-500">Check-in completion health across L1 managers</p>
+          <p className="text-[15px] font-medium text-gray-900">Manager effectiveness</p>
+          <p className="mt-1 text-[13px] text-gray-500">Check-in completion health across L1 managers</p>
         </div>
         <div className="grid gap-4 md:grid-cols-3">
           {analytics.managerEffectiveness.map((manager) => (
             <div className="rounded-lg border border-gray-200 bg-gray-50 p-5" key={manager.managerName}>
               <div className="flex items-center justify-between gap-3">
-                <p className="text-sm font-semibold text-gray-900">{manager.managerName}</p>
-                <span className="rounded-full bg-blue-50 px-3 py-1 text-xs font-medium text-blue-700">
+                <p className="text-[15px] font-medium text-gray-900">{manager.managerName}</p>
+                <span className="rounded-full bg-blue-50 px-3 py-1 text-[11px] font-medium text-blue-700">
                   {manager.completionRate}% complete
                 </span>
               </div>
@@ -430,7 +430,7 @@ function AdminAnalytics({ analytics }: { analytics: AnalyticsSnapshot }) {
                   style={{ width: `${manager.completionRate}%` }}
                 />
               </div>
-              <p className="mt-4 text-sm text-gray-500">
+              <p className="mt-4 text-[13px] text-gray-500">
                 Pending approvals: <span className="font-semibold text-gray-900">{manager.pendingApprovals}</span>
               </p>
             </div>
