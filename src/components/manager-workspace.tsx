@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 
-import { AnalyticsSnapshot, CheckIn, CheckInStatus, DashboardSnapshot, Goal } from "@/lib/types";
+import { AnalyticsSnapshot, AuditEvent, CheckIn, CheckInStatus, DashboardSnapshot, Goal } from "@/lib/types";
 
 import { LogoutButton } from "@/components/logout-button";
 
@@ -12,6 +12,7 @@ type ManagerWorkspaceProps = {
 };
 
 type ManagerTab = "approvals" | "checkins" | "analytics";
+type ManagerPanel = "team" | "checkins" | "activity" | "analytics" | "notifications";
 
 type ReviewAction = "Approved" | "Rework";
 
@@ -25,12 +26,12 @@ const managerTabs: Array<{ id: ManagerTab; label: string }> = [
   { id: "analytics", label: "Analytics" }
 ];
 
-const managerNav = [
-  { label: "My team", section: "WORKSPACE", active: true },
-  { label: "Check-ins", section: "WORKSPACE" },
-  { label: "Activity log", section: "WORKSPACE" },
-  { label: "Analytics", section: "PROGRESS" },
-  { label: "Notifications", section: "PROGRESS" }
+const managerNav: Array<{ label: string; section: string; panel: ManagerPanel }> = [
+  { label: "My team", section: "WORKSPACE", panel: "team" },
+  { label: "Check-ins", section: "WORKSPACE", panel: "checkins" },
+  { label: "Activity log", section: "WORKSPACE", panel: "activity" },
+  { label: "Analytics", section: "PROGRESS", panel: "analytics" },
+  { label: "Notifications", section: "PROGRESS", panel: "notifications" }
 ];
 
 function getGoalStateTone(state: Goal["state"]) {
@@ -69,6 +70,7 @@ function getManagerCheckIns(goals: Goal[], checkIns: CheckIn[]): CheckInDraft[] 
 }
 
 export function ManagerWorkspace({ userName, snapshot }: ManagerWorkspaceProps) {
+  const [activePanel, setActivePanel] = useState<ManagerPanel>("team");
   const [activeTab, setActiveTab] = useState<ManagerTab>("approvals");
   const [goals, setGoals] = useState(snapshot.goals);
   const [comments, setComments] = useState<Record<string, string>>(
@@ -89,6 +91,44 @@ export function ManagerWorkspace({ userName, snapshot }: ManagerWorkspaceProps) 
     () => goals.filter((goal) => goal.state === "Approved"),
     [goals]
   );
+
+  function openPanel(panel: ManagerPanel) {
+    setActivePanel(panel);
+
+    if (panel === "team") {
+      setActiveTab("approvals");
+    }
+
+    if (panel === "checkins") {
+      setActiveTab("checkins");
+    }
+
+    if (panel === "analytics") {
+      setActiveTab("analytics");
+    }
+  }
+
+  const showTabbedWorkspace = activePanel !== "activity" && activePanel !== "notifications";
+  const pageTitle =
+    activePanel === "team"
+      ? "Manager workspace"
+      : activePanel === "checkins"
+        ? "Check-ins"
+        : activePanel === "activity"
+          ? "Activity log"
+          : activePanel === "analytics"
+            ? "Analytics"
+            : "Notifications";
+  const pageSubtitle =
+    activePanel === "team"
+      ? "FY26 · Team review and quarterly tracking"
+      : activePanel === "checkins"
+        ? "FY26 · Planned vs actual review by goal"
+        : activePanel === "activity"
+          ? "FY26 · Recent approval and review history"
+          : activePanel === "analytics"
+            ? "FY26 · Team performance insights"
+            : "FY26 · Action items and reminders";
 
   function updateGoal(goalId: string, field: "target" | "weight", value: string | number) {
     setGoals((currentGoals) =>
@@ -161,11 +201,12 @@ export function ManagerWorkspace({ userName, snapshot }: ManagerWorkspaceProps) 
                   .map((item) => (
                     <button
                       className={
-                        item.active
+                        activePanel === item.panel
                           ? "flex w-full items-center rounded-r-lg border-l-4 border-blue-700 bg-white px-3 py-2 text-left text-[14px] font-medium text-gray-900"
                           : "flex w-full items-center rounded-r-lg border-l-4 border-transparent px-3 py-2 text-left text-[14px] text-gray-600"
                       }
                       key={item.label}
+                      onClick={() => openPanel(item.panel)}
                       type="button"
                     >
                       {item.label}
@@ -197,8 +238,8 @@ export function ManagerWorkspace({ userName, snapshot }: ManagerWorkspaceProps) 
         <div className="border-b border-gray-200 bg-white px-10 py-6">
           <div className="flex items-start justify-between gap-6">
             <div>
-              <h1 className="text-[22px] font-medium tracking-tight text-gray-900">Manager workspace</h1>
-              <p className="mt-1 text-[13px] text-gray-500">FY26 · Team review and quarterly tracking</p>
+              <h1 className="text-[22px] font-medium tracking-tight text-gray-900">{pageTitle}</h1>
+              <p className="mt-1 text-[13px] text-gray-500">{pageSubtitle}</p>
             </div>
             <div className="flex items-center gap-3">
               <button
@@ -211,26 +252,38 @@ export function ManagerWorkspace({ userName, snapshot }: ManagerWorkspaceProps) 
             </div>
           </div>
 
-          <div className="mt-6 flex gap-8 border-b border-gray-200">
-            {managerTabs.map((tab) => (
-              <button
-                className={
-                  activeTab === tab.id
-                    ? "border-b-2 border-blue-700 pb-4 text-left text-[14px] font-semibold text-blue-700"
-                    : "border-b-2 border-transparent pb-4 text-left text-[14px] font-medium text-gray-500"
-                }
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
-                type="button"
-              >
-                {tab.label}
-              </button>
-            ))}
-          </div>
+          {showTabbedWorkspace ? (
+            <div className="mt-6 flex gap-8 border-b border-gray-200">
+              {managerTabs.map((tab) => (
+                <button
+                  className={
+                    activeTab === tab.id
+                      ? "border-b-2 border-blue-700 pb-4 text-left text-[14px] font-semibold text-blue-700"
+                      : "border-b-2 border-transparent pb-4 text-left text-[14px] font-medium text-gray-500"
+                  }
+                  key={tab.id}
+                  onClick={() => {
+                    setActiveTab(tab.id);
+                    setActivePanel(tab.id === "approvals" ? "team" : tab.id);
+                  }}
+                  type="button"
+                >
+                  {tab.label}
+                </button>
+              ))}
+            </div>
+          ) : null}
         </div>
 
         <div className="px-10 py-8">
-          {activeTab === "approvals" ? (
+          {activePanel === "activity" ? (
+            <ActivityLogPanel events={snapshot.auditEvents} />
+          ) : activePanel === "notifications" ? (
+            <ManagerNotificationsPanel
+              pendingGoals={pendingGoals.length}
+              pendingCheckIns={checkIns.filter((item) => item.status !== "Completed").length}
+            />
+          ) : activeTab === "approvals" ? (
             <div className="space-y-6">
               <div className="grid gap-4 md:grid-cols-3">
                 <StatCard
@@ -401,6 +454,60 @@ export function ManagerWorkspace({ userName, snapshot }: ManagerWorkspaceProps) 
           ) : null}
         </div>
       </main>
+    </div>
+  );
+}
+
+function ActivityLogPanel({ events }: { events: AuditEvent[] }) {
+  return (
+    <div className="space-y-4">
+      {events.map((event) => (
+        <article className="rounded-xl border border-gray-200 bg-white p-6" key={event.id}>
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <h3 className="text-[15px] font-medium text-gray-900">{event.actor}</h3>
+              <p className="mt-1 text-[13px] text-gray-400">
+                {event.action} on {event.target}
+              </p>
+            </div>
+            <span className="text-[13px] text-gray-500">{event.timestamp}</span>
+          </div>
+        </article>
+      ))}
+    </div>
+  );
+}
+
+function ManagerNotificationsPanel({
+  pendingGoals,
+  pendingCheckIns
+}: {
+  pendingGoals: number;
+  pendingCheckIns: number;
+}) {
+  const items = [
+    {
+      title: "Approval queue",
+      body: `${pendingGoals} goals currently need your approval decision.`
+    },
+    {
+      title: "Quarterly reviews",
+      body: `${pendingCheckIns} check-ins are still not completed across your team.`
+    },
+    {
+      title: "Manager note",
+      body: "Use the approvals tab to adjust target and weightage before final approval."
+    }
+  ];
+
+  return (
+    <div className="space-y-4">
+      {items.map((item) => (
+        <article className="rounded-xl border border-gray-200 bg-white p-6" key={item.title}>
+          <h3 className="text-[15px] font-medium text-gray-900">{item.title}</h3>
+          <p className="mt-2 text-[13px] text-gray-500">{item.body}</p>
+        </article>
+      ))}
     </div>
   );
 }

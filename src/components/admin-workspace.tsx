@@ -12,6 +12,7 @@ type AdminWorkspaceProps = {
 };
 
 type AdminTab = "governance" | "reporting" | "audit" | "analytics";
+type AdminPanel = "governance" | "reporting" | "activity" | "analytics" | "notifications";
 
 const adminTabs: Array<{ id: AdminTab; label: string }> = [
   { id: "governance", label: "Governance" },
@@ -20,12 +21,12 @@ const adminTabs: Array<{ id: AdminTab; label: string }> = [
   { id: "analytics", label: "Analytics" }
 ];
 
-const adminNav = [
-  { label: "Governance", section: "WORKSPACE", active: true },
-  { label: "Reporting", section: "WORKSPACE" },
-  { label: "Activity log", section: "WORKSPACE" },
-  { label: "Analytics", section: "PROGRESS" },
-  { label: "Notifications", section: "PROGRESS" }
+const adminNav: Array<{ label: string; section: string; panel: AdminPanel }> = [
+  { label: "Governance", section: "WORKSPACE", panel: "governance" },
+  { label: "Reporting", section: "WORKSPACE", panel: "reporting" },
+  { label: "Activity log", section: "WORKSPACE", panel: "activity" },
+  { label: "Analytics", section: "PROGRESS", panel: "analytics" },
+  { label: "Notifications", section: "PROGRESS", panel: "notifications" }
 ];
 
 function getRequestTone(status: UnlockRequest["status"]) {
@@ -41,6 +42,7 @@ function getRequestTone(status: UnlockRequest["status"]) {
 }
 
 export function AdminWorkspace({ userName, snapshot }: AdminWorkspaceProps) {
+  const [activePanel, setActivePanel] = useState<AdminPanel>("governance");
   const [activeTab, setActiveTab] = useState<AdminTab>("governance");
   const [unlockRequests, setUnlockRequests] = useState(snapshot.unlockRequests);
 
@@ -48,6 +50,48 @@ export function AdminWorkspace({ userName, snapshot }: AdminWorkspaceProps) {
     () => unlockRequests.filter((request) => request.status === "Pending"),
     [unlockRequests]
   );
+
+  function openPanel(panel: AdminPanel) {
+    setActivePanel(panel);
+
+    if (panel === "governance") {
+      setActiveTab("governance");
+    }
+
+    if (panel === "reporting") {
+      setActiveTab("reporting");
+    }
+
+    if (panel === "activity") {
+      setActiveTab("audit");
+    }
+
+    if (panel === "analytics") {
+      setActiveTab("analytics");
+    }
+  }
+
+  const showTabbedWorkspace = activePanel !== "notifications";
+  const pageTitle =
+    activePanel === "governance"
+      ? "Admin workspace"
+      : activePanel === "reporting"
+        ? "Reporting"
+        : activePanel === "activity"
+          ? "Activity log"
+          : activePanel === "analytics"
+            ? "Analytics"
+            : "Notifications";
+  const pageSubtitle =
+    activePanel === "governance"
+      ? "FY26 · Governance, reporting, and analytics"
+      : activePanel === "reporting"
+        ? "FY26 · Export-ready reporting and completion views"
+        : activePanel === "activity"
+          ? "FY26 · Audit history and governance trail"
+          : activePanel === "analytics"
+            ? "FY26 · Organization performance insights"
+            : "FY26 · Governance alerts and reminders";
 
   function updateRequest(requestId: string, status: UnlockRequest["status"]) {
     setUnlockRequests((currentRequests) =>
@@ -82,11 +126,12 @@ export function AdminWorkspace({ userName, snapshot }: AdminWorkspaceProps) {
                   .map((item) => (
                     <button
                       className={
-                        item.active
+                        activePanel === item.panel
                           ? "flex w-full items-center rounded-r-lg border-l-4 border-blue-700 bg-white px-3 py-2 text-left text-[14px] font-medium text-gray-900"
                           : "flex w-full items-center rounded-r-lg border-l-4 border-transparent px-3 py-2 text-left text-[14px] text-gray-600"
                       }
                       key={item.label}
+                      onClick={() => openPanel(item.panel)}
                       type="button"
                     >
                       {item.label}
@@ -118,8 +163,8 @@ export function AdminWorkspace({ userName, snapshot }: AdminWorkspaceProps) {
         <div className="border-b border-gray-200 bg-white px-10 py-6">
           <div className="flex items-start justify-between gap-6">
             <div>
-              <h1 className="text-[22px] font-medium tracking-tight text-gray-900">Admin workspace</h1>
-              <p className="mt-1 text-[13px] text-gray-500">FY26 · Governance, reporting, and analytics</p>
+              <h1 className="text-[22px] font-medium tracking-tight text-gray-900">{pageTitle}</h1>
+              <p className="mt-1 text-[13px] text-gray-500">{pageSubtitle}</p>
             </div>
             <div className="flex items-center gap-3">
               <button
@@ -132,26 +177,41 @@ export function AdminWorkspace({ userName, snapshot }: AdminWorkspaceProps) {
             </div>
           </div>
 
-          <div className="mt-6 flex gap-8 border-b border-gray-200">
-            {adminTabs.map((tab) => (
-              <button
-                className={
-                  activeTab === tab.id
-                    ? "border-b-2 border-blue-700 pb-4 text-left text-[14px] font-semibold text-blue-700"
-                    : "border-b-2 border-transparent pb-4 text-left text-[14px] font-medium text-gray-500"
-                }
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
-                type="button"
-              >
-                {tab.label}
-              </button>
-            ))}
-          </div>
+          {showTabbedWorkspace ? (
+            <div className="mt-6 flex gap-8 border-b border-gray-200">
+              {adminTabs.map((tab) => (
+                <button
+                  className={
+                    activeTab === tab.id
+                      ? "border-b-2 border-blue-700 pb-4 text-left text-[14px] font-semibold text-blue-700"
+                      : "border-b-2 border-transparent pb-4 text-left text-[14px] font-medium text-gray-500"
+                  }
+                  key={tab.id}
+                  onClick={() => {
+                    setActiveTab(tab.id);
+                    setActivePanel(
+                      tab.id === "audit"
+                        ? "activity"
+                        : tab.id
+                    );
+                  }}
+                  type="button"
+                >
+                  {tab.label}
+                </button>
+              ))}
+            </div>
+          ) : null}
         </div>
 
         <div className="px-10 py-8">
-          {activeTab === "governance" ? (
+          {activePanel === "notifications" ? (
+            <AdminNotificationsPanel
+              pendingRequests={pendingRequests.length}
+              reportRows={snapshot.reportRows.length}
+              auditEvents={snapshot.auditEvents.length}
+            />
+          ) : activeTab === "governance" ? (
             <div className="space-y-6">
               <div className="grid gap-4 md:grid-cols-3">
                 <StatCard
@@ -239,6 +299,42 @@ export function AdminWorkspace({ userName, snapshot }: AdminWorkspaceProps) {
           {activeTab === "analytics" ? <AdminAnalytics analytics={snapshot.analytics} /> : null}
         </div>
       </main>
+    </div>
+  );
+}
+
+function AdminNotificationsPanel({
+  pendingRequests,
+  reportRows,
+  auditEvents
+}: {
+  pendingRequests: number;
+  reportRows: number;
+  auditEvents: number;
+}) {
+  const items = [
+    {
+      title: "Unlock requests",
+      body: `${pendingRequests} requests are currently waiting for admin review.`
+    },
+    {
+      title: "Reporting readiness",
+      body: `${reportRows} report rows are available for export and governance review.`
+    },
+    {
+      title: "Audit visibility",
+      body: `${auditEvents} recent audit events are available in the activity log.`
+    }
+  ];
+
+  return (
+    <div className="space-y-4">
+      {items.map((item) => (
+        <article className="rounded-xl border border-gray-200 bg-white p-6" key={item.title}>
+          <h3 className="text-[15px] font-medium text-gray-900">{item.title}</h3>
+          <p className="mt-2 text-[13px] text-gray-500">{item.body}</p>
+        </article>
+      ))}
     </div>
   );
 }

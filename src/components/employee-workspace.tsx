@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 
-import { DashboardSnapshot, Goal, GoalUnit, CheckIn, CheckInStatus } from "@/lib/types";
+import { AnalyticsSnapshot, AuditEvent, DashboardSnapshot, Goal, GoalUnit, CheckIn, CheckInStatus } from "@/lib/types";
 
 type EmployeeWorkspaceProps = {
   userName: string;
@@ -10,6 +10,7 @@ type EmployeeWorkspaceProps = {
 };
 
 type EmployeeTab = "goal-sheet" | "q1" | "q2" | "q3" | "q4";
+type EmployeePanel = "goals" | "checkins" | "activity" | "analytics" | "notifications";
 
 type GoalDraft = {
   id?: string;
@@ -61,12 +62,12 @@ const emptyGoalDraft: GoalDraft = {
   shared: false
 };
 
-const workspaceNav = [
-  { label: "My Goals", section: "WORKSPACE", active: true },
-  { label: "Check-ins", section: "WORKSPACE" },
-  { label: "Activity Log", section: "WORKSPACE" },
-  { label: "Analytics", section: "PROGRESS" },
-  { label: "Notifications", section: "PROGRESS" }
+const workspaceNav: Array<{ label: string; section: string; panel: EmployeePanel }> = [
+  { label: "My Goals", section: "WORKSPACE", panel: "goals" },
+  { label: "Check-ins", section: "WORKSPACE", panel: "checkins" },
+  { label: "Activity Log", section: "WORKSPACE", panel: "activity" },
+  { label: "Analytics", section: "PROGRESS", panel: "analytics" },
+  { label: "Notifications", section: "PROGRESS", panel: "notifications" }
 ];
 
 function getSheetStatus(goals: Goal[]) {
@@ -178,6 +179,7 @@ function getUomCopy(unit: GoalUnit) {
 }
 
 export function EmployeeWorkspace({ userName, snapshot }: EmployeeWorkspaceProps) {
+  const [activePanel, setActivePanel] = useState<EmployeePanel>("goals");
   const [activeTab, setActiveTab] = useState<EmployeeTab>("goal-sheet");
   const [goals, setGoals] = useState<Goal[]>(snapshot.goals);
   const [goalDraft, setGoalDraft] = useState<GoalDraft>(emptyGoalDraft);
@@ -203,6 +205,19 @@ export function EmployeeWorkspace({ userName, snapshot }: EmployeeWorkspaceProps
     sheetStatus === "Draft";
   const activeQuarterMeta =
     activeTab === "goal-sheet" ? null : getWindowMeta(activeTab);
+  const showTabbedWorkspace = activePanel === "goals" || activePanel === "checkins";
+
+  function openPanel(panel: EmployeePanel) {
+    setActivePanel(panel);
+
+    if (panel === "goals") {
+      setActiveTab("goal-sheet");
+    }
+
+    if (panel === "checkins" && activeTab === "goal-sheet") {
+      setActiveTab("q1");
+    }
+  }
 
   function resetDraft() {
     setGoalDraft(emptyGoalDraft);
@@ -328,11 +343,26 @@ export function EmployeeWorkspace({ userName, snapshot }: EmployeeWorkspaceProps
         .filter(Boolean)
         .join(" ");
 
-  const pageTitle = activeTab === "goal-sheet" ? "My goal sheet" : tabs.find((tab) => tab.id === activeTab)?.label;
+  const pageTitle =
+    activePanel === "goals"
+      ? "My goal sheet"
+      : activePanel === "checkins"
+        ? tabs.find((tab) => tab.id === activeTab)?.label ?? "Check-ins"
+        : activePanel === "activity"
+          ? "Activity log"
+          : activePanel === "analytics"
+            ? "Progress analytics"
+            : "Notifications";
   const cycleMeta =
-    activeTab === "goal-sheet"
+    activePanel === "goals"
       ? "FY26 · Phase 2 — Goal setting open"
-      : `FY26 · ${activeQuarterMeta?.period ?? ""}`;
+      : activePanel === "checkins"
+        ? `FY26 · ${activeQuarterMeta?.period ?? ""}`
+        : activePanel === "activity"
+          ? "FY26 · Recent goal and check-in events"
+          : activePanel === "analytics"
+            ? "FY26 · Goal health and quarterly momentum"
+            : "FY26 · Workflow alerts and reminders";
 
   return (
     <div className="min-h-screen bg-[#f8f7f3] text-gray-900">
@@ -354,11 +384,12 @@ export function EmployeeWorkspace({ userName, snapshot }: EmployeeWorkspaceProps
                   .map((item) => (
                     <button
                       className={
-                        item.active
+                        activePanel === item.panel
                           ? "flex w-full items-center rounded-r-lg border-l-4 border-blue-700 bg-white px-3 py-2 text-left text-[14px] font-medium text-gray-900"
                           : "flex w-full items-center rounded-r-lg border-l-4 border-transparent px-3 py-2 text-left text-[14px] text-gray-600"
                       }
                       key={item.label}
+                      onClick={() => openPanel(item.panel)}
                       type="button"
                     >
                       {item.label}
@@ -400,37 +431,59 @@ export function EmployeeWorkspace({ userName, snapshot }: EmployeeWorkspaceProps
               >
                 Export
               </button>
-              <button
-                className="rounded-xl bg-blue-700 px-5 py-3 text-[13px] font-semibold text-white disabled:cursor-not-allowed disabled:bg-blue-300"
-                disabled={activeTab !== "goal-sheet" ? !activeQuarterMeta?.isOpen : !canSubmit}
-                onClick={activeTab === "goal-sheet" ? submitGoalSheet : undefined}
-                type="button"
-              >
-                {activeTab === "goal-sheet" ? "Submit for approval" : "Save update"}
-              </button>
+              {showTabbedWorkspace ? (
+                <button
+                  className="rounded-xl bg-blue-700 px-5 py-3 text-[13px] font-semibold text-white disabled:cursor-not-allowed disabled:bg-blue-300"
+                  disabled={activeTab !== "goal-sheet" ? !activeQuarterMeta?.isOpen : !canSubmit}
+                  onClick={activeTab === "goal-sheet" ? submitGoalSheet : undefined}
+                  type="button"
+                >
+                  {activeTab === "goal-sheet" ? "Submit for approval" : "Save update"}
+                </button>
+              ) : null}
             </div>
           </div>
 
-          <div className="mt-6 flex gap-8 border-b border-gray-200">
-            {tabs.map((tab) => (
-              <button
-                className={
-                  activeTab === tab.id
-                    ? "border-b-2 border-blue-700 pb-4 text-left text-[14px] font-semibold text-blue-700"
-                    : "border-b-2 border-transparent pb-4 text-left text-[14px] font-medium text-gray-500"
-                }
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
-                type="button"
-              >
-                {tab.label}
-              </button>
-            ))}
-          </div>
+          {showTabbedWorkspace ? (
+            <div className="mt-6 flex gap-8 border-b border-gray-200">
+              {tabs.map((tab) => (
+                <button
+                  className={
+                    activeTab === tab.id
+                      ? "border-b-2 border-blue-700 pb-4 text-left text-[14px] font-semibold text-blue-700"
+                      : "border-b-2 border-transparent pb-4 text-left text-[14px] font-medium text-gray-500"
+                  }
+                  key={tab.id}
+                  onClick={() => {
+                    setActiveTab(tab.id);
+                    setActivePanel(tab.id === "goal-sheet" ? "goals" : "checkins");
+                  }}
+                  type="button"
+                >
+                  {tab.label}
+                </button>
+              ))}
+            </div>
+          ) : null}
         </div>
 
         <div className="px-10 py-8">
-          {activeTab === "goal-sheet" ? (
+          {activePanel === "activity" ? (
+            <ActivityLogPanel events={snapshot.auditEvents} />
+          ) : activePanel === "analytics" ? (
+            <EmployeeAnalyticsPanel
+              analytics={snapshot.analytics}
+              approvedGoals={goals.filter((goal) => goal.state === "Approved").length}
+              submittedGoals={goals.filter((goal) => goal.state === "Pending Approval").length}
+            />
+          ) : activePanel === "notifications" ? (
+            <EmployeeNotificationsPanel
+              canSubmit={canSubmit}
+              checkInPeriod={activeQuarterMeta?.period ?? "Q1 Check-in"}
+              goalCount={goalCount}
+              sheetStatus={sheetStatus}
+            />
+          ) : activeTab === "goal-sheet" ? (
             <div className="space-y-6 pb-32">
               <div className="grid gap-4 md:grid-cols-3">
                 <div className="rounded-lg border border-gray-200 bg-gray-50 p-5">
@@ -718,6 +771,139 @@ export function EmployeeWorkspace({ userName, snapshot }: EmployeeWorkspaceProps
           )}
         </div>
       </main>
+    </div>
+  );
+}
+
+function ActivityLogPanel({ events }: { events: AuditEvent[] }) {
+  return (
+    <div className="space-y-4">
+      {events.map((event) => (
+        <article className="rounded-xl border border-gray-200 bg-white p-6" key={event.id}>
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <h3 className="text-[15px] font-medium text-gray-900">{event.actor}</h3>
+              <p className="mt-1 text-[13px] text-gray-400">
+                {event.action} on {event.target}
+              </p>
+            </div>
+            <span className="text-[13px] text-gray-500">{event.timestamp}</span>
+          </div>
+        </article>
+      ))}
+    </div>
+  );
+}
+
+function EmployeeAnalyticsPanel({
+  analytics,
+  approvedGoals,
+  submittedGoals
+}: {
+  analytics: AnalyticsSnapshot;
+  approvedGoals: number;
+  submittedGoals: number;
+}) {
+  return (
+    <div className="space-y-6">
+      <div className="grid gap-4 md:grid-cols-3">
+        <div className="rounded-lg border border-gray-200 bg-gray-50 p-5">
+          <p className="text-[28px] font-medium text-gray-900">{approvedGoals}</p>
+          <p className="mt-2 text-[13px] text-gray-500">Approved goals</p>
+        </div>
+        <div className="rounded-lg border border-gray-200 bg-gray-50 p-5">
+          <p className="text-[28px] font-medium text-gray-900">{submittedGoals}</p>
+          <p className="mt-2 text-[13px] text-gray-500">Submitted goals</p>
+        </div>
+        <div className="rounded-lg border border-gray-200 bg-gray-50 p-5">
+          <p className="text-[28px] font-medium text-gray-900">
+            {analytics.quarterlyTrends.at(-1)?.value ?? 0}%
+          </p>
+          <p className="mt-2 text-[13px] text-gray-500">Latest quarterly trend</p>
+        </div>
+      </div>
+
+      <div className="grid gap-4 lg:grid-cols-2">
+        <article className="rounded-xl border border-gray-200 bg-white p-6">
+          <div className="mb-6">
+            <p className="text-[15px] font-medium text-gray-900">QoQ trend</p>
+            <p className="mt-1 text-[13px] text-gray-500">Progress momentum across your current goals</p>
+          </div>
+          <div className="flex items-end justify-between gap-4">
+            {analytics.quarterlyTrends.map((point) => (
+              <div className="flex flex-1 flex-col items-center gap-3" key={point.label}>
+                <div className="flex h-44 w-full max-w-16 items-end rounded-xl bg-blue-50 p-2">
+                  <div className="w-full rounded-lg bg-blue-700" style={{ height: `${point.value}%` }} />
+                </div>
+                <p className="text-base font-medium text-gray-900">{point.value}%</p>
+                <p className="text-[13px] text-gray-500">{point.label}</p>
+              </div>
+            ))}
+          </div>
+        </article>
+
+        <article className="rounded-xl border border-gray-200 bg-white p-6">
+          <div className="mb-6">
+            <p className="text-[15px] font-medium text-gray-900">Goal distribution</p>
+            <p className="mt-1 text-[13px] text-gray-500">Current spread by thrust area</p>
+          </div>
+          <div className="space-y-4">
+            {analytics.goalDistribution.map((row) => (
+              <div key={row.label}>
+                <div className="mb-2 flex items-center justify-between gap-4 text-base">
+                  <span className="font-medium text-gray-900">{row.label}</span>
+                  <span className="text-gray-500">{row.value}%</span>
+                </div>
+                <div className="h-3 overflow-hidden rounded-full bg-gray-100">
+                  <div className="h-full rounded-full bg-blue-700" style={{ width: `${row.value}%` }} />
+                </div>
+              </div>
+            ))}
+          </div>
+        </article>
+      </div>
+    </div>
+  );
+}
+
+function EmployeeNotificationsPanel({
+  canSubmit,
+  checkInPeriod,
+  goalCount,
+  sheetStatus
+}: {
+  canSubmit: boolean;
+  checkInPeriod: string;
+  goalCount: number;
+  sheetStatus: string;
+}) {
+  const notifications = [
+    {
+      title: "Goal sheet status",
+      body: `Your goal sheet is currently ${sheetStatus.toLowerCase()}.`
+    },
+    {
+      title: "Goal count",
+      body: `${goalCount} of 8 goals are currently added to your sheet.`
+    },
+    {
+      title: "Next milestone",
+      body: `${checkInPeriod} updates become available when the window opens.`
+    },
+    {
+      title: "Submission readiness",
+      body: canSubmit ? "All validations pass and your sheet is ready to submit." : "Some validations are still pending before submission."
+    }
+  ];
+
+  return (
+    <div className="space-y-4">
+      {notifications.map((item) => (
+        <article className="rounded-xl border border-gray-200 bg-white p-6" key={item.title}>
+          <h3 className="text-[15px] font-medium text-gray-900">{item.title}</h3>
+          <p className="mt-2 text-[13px] text-gray-500">{item.body}</p>
+        </article>
+      ))}
     </div>
   );
 }
