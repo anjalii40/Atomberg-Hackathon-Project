@@ -5,7 +5,7 @@ export function mapGoalStateTone(state: GoalState) {
     return "approved";
   }
 
-  if (state === "Submitted") {
+  if (state === "Pending Approval") {
     return "submitted";
   }
 

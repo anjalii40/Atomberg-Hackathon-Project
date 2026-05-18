@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 
-import { RoleDashboard } from "@/components/role-dashboard";
+import { EmployeeWorkspace } from "@/components/employee-workspace";
 import { getDashboardSnapshot } from "@/lib/demo-data";
 import { getCurrentSession } from "@/lib/server-session";
 
@@ -13,5 +13,5 @@ export default async function EmployeePage() {
 
   const snapshot = getDashboardSnapshot("employee");
 
-  return <RoleDashboard role="employee" snapshot={snapshot} userName={session.name} />;
+  return <EmployeeWorkspace snapshot={snapshot} userName={session.name} />;
 }

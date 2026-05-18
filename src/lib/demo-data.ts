@@ -45,7 +45,7 @@ const goals: Goal[] = [
     unit: "Numeric",
     target: "24 hours",
     weight: 35,
-    state: "Submitted",
+    state: "Pending Approval",
     shared: false
   },
   {

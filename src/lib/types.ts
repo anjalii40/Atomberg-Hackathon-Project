@@ -1,7 +1,7 @@
 export type Role = "employee" | "manager" | "admin";
 
 export type GoalUnit = "Numeric" | "%" | "Timeline" | "Zero";
-export type GoalState = "Draft" | "Submitted" | "Approved" | "Rework";
+export type GoalState = "Draft" | "Pending Approval" | "Approved" | "Rework";
 export type CheckInStatus = "Not Started" | "On Track" | "Completed";
 
 export type User = {

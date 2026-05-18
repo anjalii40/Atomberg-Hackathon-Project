@@ -61,45 +61,70 @@ export function RoleDashboard({ role, userName, snapshot }: RoleDashboardProps) 
       </section>
 
       <section className="content-grid">
-        <article className="panel panel-large">
-          <div className="panel-heading">
-            <div>
-              <span className="section-label">Workflow Snapshot</span>
-              <h2>Goals in Motion</h2>
+        {role !== "employee" ? (
+          <article className="panel panel-large">
+            <div className="panel-heading">
+              <div>
+                <span className="section-label">Workflow Snapshot</span>
+                <h2>Goals in Motion</h2>
+              </div>
+              <StatusPill label={role.toUpperCase()} tone="neutral" />
             </div>
-            <StatusPill label={role.toUpperCase()} tone="neutral" />
-          </div>
 
-          <div className="table-wrap">
-            <table>
-              <thead>
-                <tr>
-                  <th>Goal</th>
-                  <th>Thrust Area</th>
-                  <th>UoM</th>
-                  <th>Weight</th>
-                  <th>Status</th>
-                </tr>
-              </thead>
-              <tbody>
-                {snapshot.goals.map((goal) => (
-                  <tr key={goal.id}>
-                    <td>
-                      <strong>{goal.title}</strong>
-                      <p>{goal.description}</p>
-                    </td>
-                    <td>{goal.thrustArea}</td>
-                    <td>{goal.unit}</td>
-                    <td>{goal.weight}%</td>
-                    <td>
-                      <StatusPill label={goal.state} tone={mapGoalStateTone(goal.state)} />
-                    </td>
+            <div className="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Goal</th>
+                    <th>Thrust Area</th>
+                    <th>UoM</th>
+                    <th>Weight</th>
+                    <th>Status</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </article>
+                </thead>
+                <tbody>
+                  {snapshot.goals.map((goal) => (
+                    <tr key={goal.id}>
+                      <td>
+                        <strong>{goal.title}</strong>
+                        <p>{goal.description}</p>
+                      </td>
+                      <td>{goal.thrustArea}</td>
+                      <td>{goal.unit}</td>
+                      <td>{goal.weight}%</td>
+                      <td>
+                        <StatusPill label={goal.state} tone={mapGoalStateTone(goal.state)} />
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </article>
+        ) : (
+          <article className="panel panel-large onboarding-panel">
+            <div className="panel-heading">
+              <div>
+                <span className="section-label">Start Here</span>
+                <h2>Create your goal sheet</h2>
+              </div>
+            </div>
+            <div className="stack-list">
+              <div className="stack-card">
+                <strong>1. Add goals one by one</strong>
+                <p className="muted-text">Choose the right UoM and keep every goal at 10% weight or above.</p>
+              </div>
+              <div className="stack-card">
+                <strong>2. Reach 100% total weightage</strong>
+                <p className="muted-text">The sheet stays invalid until the complete set of goals adds up to 100%.</p>
+              </div>
+              <div className="stack-card">
+                <strong>3. Submit for manager approval</strong>
+                <p className="muted-text">After submission, the sheet becomes pending approval and edits are blocked.</p>
+              </div>
+            </div>
+          </article>
+        )}
 
         <article className="panel">
           <div className="panel-heading">
@@ -165,19 +190,13 @@ export function RoleDashboard({ role, userName, snapshot }: RoleDashboardProps) 
 
         {role === "employee" ? (
           <article className="panel panel-wide panel-builder">
-            <GoalSheetBuilder initialGoals={snapshot.goals} />
+            <GoalSheetBuilder initialGoals={[]} />
           </article>
         ) : null}
 
         {role === "manager" ? (
           <article className="panel panel-wide panel-builder">
             <ManagerApprovalQueue initialGoals={snapshot.goals} />
-          </article>
-        ) : null}
-
-        {role === "employee" ? (
-          <article className="panel panel-wide panel-builder">
-            <QuarterlyCheckinTracker initialCheckIns={snapshot.checkIns} mode="employee" />
           </article>
         ) : null}
 

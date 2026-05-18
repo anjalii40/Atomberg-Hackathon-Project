@@ -26,7 +26,7 @@ export function ManagerApprovalQueue({ initialGoals }: ManagerApprovalQueueProps
   } | null>(null);
 
   const submittedGoals = useMemo(
-    () => goals.filter((goal) => goal.state === "Submitted" || goal.state === "Rework"),
+    () => goals.filter((goal) => goal.state === "Pending Approval" || goal.state === "Rework"),
     [goals]
   );
   const approvedGoals = useMemo(() => goals.filter((goal) => goal.state === "Approved"), [goals]);
