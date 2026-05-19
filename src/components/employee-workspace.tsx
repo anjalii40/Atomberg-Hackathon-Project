@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 
 import { DashboardSnapshot, Goal, GoalUnit, CheckIn, CheckInStatus } from "@/lib/types";
+import { NotificationService } from "@/lib/notification-service";
 
 type EmployeeWorkspaceProps = {
   userName: string;
@@ -316,6 +317,15 @@ export function EmployeeWorkspace({ userName, snapshot }: EmployeeWorkspaceProps
         state: "Pending Approval"
       }))
     );
+
+    NotificationService.notify({
+      type: "GOAL_SUBMITTED",
+      actorName: userName,
+      targetUser: "Manager",
+      deepLink: "https://atomquest.local/manager"
+    });
+    
+    alert(`[Integration Mock] Microsoft Teams adaptive card and Email notification dispatched to your Manager.`);
   }
 
   function updateCheckIn(
