@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 
 import { ManagerWorkspace } from "@/components/manager-workspace";
 import { getDashboardPath } from "@/lib/auth";
-import { getDashboardSnapshot } from "@/lib/demo-data";
+import { getDashboardSnapshotForSession } from "@/lib/runtime-store";
 import { getCurrentSession } from "@/lib/server-session";
 
 export default async function ManagerPage() {
@@ -16,7 +16,7 @@ export default async function ManagerPage() {
     redirect(getDashboardPath(session.role));
   }
 
-  const snapshot = getDashboardSnapshot("manager");
+  const snapshot = getDashboardSnapshotForSession(session);
 
   return <ManagerWorkspace snapshot={snapshot} userName={session.name} />;
 }

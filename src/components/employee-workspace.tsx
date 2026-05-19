@@ -3,7 +3,6 @@
 import { useMemo, useState } from "react";
 
 import { DashboardSnapshot, Goal, GoalUnit, CheckIn, CheckInStatus } from "@/lib/types";
-import { NotificationService } from "@/lib/notification-service";
 
 type EmployeeWorkspaceProps = {
   userName: string;
@@ -178,21 +177,13 @@ function getUomCopy(unit: GoalUnit) {
 }
 
 export function EmployeeWorkspace({ userName, snapshot }: EmployeeWorkspaceProps) {
-  const initialGoals = useMemo<Goal[]>(
-    () =>
-      snapshot.goals.map((goal) => ({
-        ...goal,
-        state: "Draft"
-      })),
-    [snapshot.goals]
-  );
   const [activePanel, setActivePanel] = useState<EmployeePanel>("goals");
   const [activeTab, setActiveTab] = useState<EmployeeTab>("goal-sheet");
-  const [goals, setGoals] = useState<Goal[]>(initialGoals);
+  const [goals, setGoals] = useState<Goal[]>(snapshot.goals);
   const [goalDraft, setGoalDraft] = useState<GoalDraft>(emptyGoalDraft);
   const [editingGoalId, setEditingGoalId] = useState<string | null>(null);
   const [checkInsByTab, setCheckInsByTab] = useState(() =>
-    buildCheckInState(initialGoals, snapshot.checkIns)
+    buildCheckInState(snapshot.goals, snapshot.checkIns)
   );
 
   const totalWeightage = useMemo(
@@ -229,6 +220,24 @@ export function EmployeeWorkspace({ userName, snapshot }: EmployeeWorkspaceProps
   function resetDraft() {
     setGoalDraft(emptyGoalDraft);
     setEditingGoalId(null);
+  }
+
+  function syncSnapshot(nextSnapshot: DashboardSnapshot) {
+    setGoals(nextSnapshot.goals);
+    setCheckInsByTab(buildCheckInState(nextSnapshot.goals, nextSnapshot.checkIns));
+    resetDraft();
+  }
+
+  async function fetchLatestSnapshot() {
+    const response = await fetch("/api/dashboard", {
+      cache: "no-store"
+    });
+
+    if (!response.ok) {
+      throw new Error("Unable to refresh dashboard.");
+    }
+
+    return (await response.json()) as DashboardSnapshot;
   }
 
   function startCreateGoal(shared = false) {
@@ -306,26 +315,37 @@ export function EmployeeWorkspace({ userName, snapshot }: EmployeeWorkspaceProps
     }
   }
 
-  function submitGoalSheet() {
+  async function submitGoalSheet() {
     if (!canSubmit) {
       return;
     }
 
-    setGoals((currentGoals) =>
-      currentGoals.map((goal) => ({
-        ...goal,
-        state: "Pending Approval"
-      }))
-    );
-
-    NotificationService.notify({
-      type: "GOAL_SUBMITTED",
-      actorName: userName,
-      targetUser: "Manager",
-      deepLink: "https://atomquest.local/manager"
+    const response = await fetch("/api/goals/submit", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        goals: goals.map((goal) => ({
+          id: goal.id.startsWith("goal-local-") ? undefined : goal.id,
+          title: goal.title,
+          thrustArea: goal.thrustArea,
+          description: goal.description,
+          unit: goal.unit,
+          target: goal.target,
+          weight: goal.weight,
+          shared: goal.shared
+        }))
+      })
     });
-    
-    alert(`[Integration Mock] Microsoft Teams adaptive card and Email notification dispatched to your Manager.`);
+
+    if (!response.ok) {
+      alert("Unable to submit goal sheet right now.");
+      return;
+    }
+
+    const latestSnapshot = await fetchLatestSnapshot();
+    syncSnapshot(latestSnapshot);
   }
 
   function updateCheckIn(
@@ -713,6 +733,12 @@ export function EmployeeWorkspace({ userName, snapshot }: EmployeeWorkspaceProps
                         </p>
                       </div>
                     </div>
+
+                    {goal.managerComment ? (
+                      <div className="mt-4 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-[12px] text-amber-800">
+                        Manager comment: {goal.managerComment}
+                      </div>
+                    ) : null}
 
                     {sheetStatus === "Draft" ? (
                       <div className="mt-4 flex justify-end">

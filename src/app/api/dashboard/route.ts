@@ -1,18 +1,14 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 
-import { getDashboardSnapshot } from "@/lib/demo-data";
-import { Role } from "@/lib/types";
+import { getCurrentSession } from "@/lib/server-session";
+import { getDashboardSnapshotForSession } from "@/lib/runtime-store";
 
-function parseRole(role: string | null): Role {
-  if (role === "manager" || role === "admin") {
-    return role;
+export async function GET() {
+  const session = await getCurrentSession();
+
+  if (!session) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  return "employee";
-}
-
-export function GET(request: NextRequest) {
-  const role = parseRole(request.nextUrl.searchParams.get("role"));
-
-  return NextResponse.json(getDashboardSnapshot(role));
+  return NextResponse.json(getDashboardSnapshotForSession(session));
 }

@@ -130,6 +130,29 @@ export function ManagerWorkspace({ userName, snapshot }: ManagerWorkspaceProps) 
             ? "FY26 · Team performance insights"
             : "FY26 · Action items and reminders";
 
+  function syncSnapshot(nextSnapshot: DashboardSnapshot) {
+    setGoals(nextSnapshot.goals);
+    setComments(
+      nextSnapshot.goals.reduce<Record<string, string>>((acc, goal) => {
+        acc[goal.id] = goal.managerComment ?? "";
+        return acc;
+      }, {})
+    );
+    setCheckIns(getManagerCheckIns(nextSnapshot.goals, nextSnapshot.checkIns));
+  }
+
+  async function fetchLatestSnapshot() {
+    const response = await fetch("/api/dashboard", {
+      cache: "no-store"
+    });
+
+    if (!response.ok) {
+      throw new Error("Unable to refresh dashboard.");
+    }
+
+    return (await response.json()) as DashboardSnapshot;
+  }
+
   function updateGoal(goalId: string, field: "target" | "weight", value: string | number) {
     setGoals((currentGoals) =>
       currentGoals.map((goal) =>
@@ -150,18 +173,32 @@ export function ManagerWorkspace({ userName, snapshot }: ManagerWorkspaceProps) 
     }));
   }
 
-  function reviewGoal(goalId: string, action: ReviewAction) {
-    setGoals((currentGoals) =>
-      currentGoals.map((goal) =>
-        goal.id === goalId
-          ? {
-              ...goal,
-              state: action === "Approved" ? "Approved" : "Rework",
-              managerComment: comments[goalId]
-            }
-          : goal
-      )
-    );
+  async function reviewGoal(goalId: string, action: ReviewAction) {
+    const goal = goals.find((item) => item.id === goalId);
+    if (!goal) {
+      return;
+    }
+
+    const response = await fetch(`/api/goals/${goalId}/review`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        action,
+        target: goal.target,
+        weight: goal.weight,
+        managerComment: comments[goalId] ?? ""
+      })
+    });
+
+    if (!response.ok) {
+      alert(action === "Approved" ? "Unable to approve goal." : "Unable to send goal for rework.");
+      return;
+    }
+
+    const latestSnapshot = await fetchLatestSnapshot();
+    syncSnapshot(latestSnapshot);
   }
 
   function updateCheckIn(
@@ -312,7 +349,10 @@ export function ManagerWorkspace({ userName, snapshot }: ManagerWorkspaceProps) 
                     <div className="flex items-start justify-between gap-4">
                       <div>
                         <h2 className="text-[15px] font-medium tracking-tight text-gray-900">{goal.title}</h2>
-                        <p className="mt-1 text-[13px] text-gray-400">{goal.thrustArea}</p>
+                        <p className="mt-1 text-[13px] text-gray-400">
+                          {goal.ownerName ? `${goal.ownerName} · ` : ""}
+                          {goal.thrustArea}
+                        </p>
                       </div>
                       <span className={`rounded-full px-3 py-1 text-[11px] font-medium ${getGoalStateTone(goal.state)}`}>
                         {goal.state}
@@ -589,6 +629,32 @@ function ManagerAnalytics({ analytics }: { analytics: AnalyticsSnapshot }) {
           </div>
         </article>
       </div>
+
+      <article className="rounded-xl border border-gray-200 bg-white p-6">
+        <div className="mb-6">
+          <p className="text-[15px] font-medium text-gray-900">Completion Heatmap (QoQ)</p>
+          <p className="mt-1 text-[13px] text-gray-500">Team-level completion heat by thrust area.</p>
+        </div>
+        <div className="grid grid-cols-[120px_1fr_1fr_1fr_1fr] gap-2 text-[13px] text-center">
+          <div className="font-semibold text-gray-400 uppercase text-left self-center">Thrust Area</div>
+          <div className="font-semibold text-gray-400 uppercase">Q1</div>
+          <div className="font-semibold text-gray-400 uppercase">Q2</div>
+          <div className="font-semibold text-gray-400 uppercase">Q3</div>
+          <div className="font-semibold text-gray-400 uppercase">Q4</div>
+          
+          <div className="text-left font-medium self-center">Revenue</div>
+          <div className="bg-blue-200 text-blue-800 rounded-lg p-3">85%</div>
+          <div className="bg-blue-300 text-blue-900 rounded-lg p-3 font-semibold">96%</div>
+          <div className="bg-blue-50 text-blue-800 rounded-lg p-3">72%</div>
+          <div className="bg-gray-100 text-gray-400 rounded-lg p-3">--</div>
+
+          <div className="text-left font-medium self-center">Operations</div>
+          <div className="bg-blue-100 text-blue-800 rounded-lg p-3">80%</div>
+          <div className="bg-blue-100 text-blue-800 rounded-lg p-3">81%</div>
+          <div className="bg-blue-200 text-blue-800 rounded-lg p-3">88%</div>
+          <div className="bg-gray-100 text-gray-400 rounded-lg p-3">--</div>
+        </div>
+      </article>
 
       <article className="rounded-xl border border-gray-200 bg-white p-6">
         <div className="mb-6">

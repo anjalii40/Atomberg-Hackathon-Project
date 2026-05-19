@@ -31,6 +31,13 @@ export const demoCredentials: DemoCredential[] = [
     role: "employee"
   },
   {
+    id: "user-employee-2",
+    name: "Priya Singh",
+    email: "priya@atomquest.local",
+    password: "priya123",
+    role: "employee"
+  },
+  {
     id: "user-manager-1",
     name: "Nisha Iyer",
     email: "manager@atomquest.local",

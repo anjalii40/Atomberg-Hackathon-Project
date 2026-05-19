@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 
 import { AdminWorkspace } from "@/components/admin-workspace";
 import { getDashboardPath } from "@/lib/auth";
-import { getDashboardSnapshot } from "@/lib/demo-data";
+import { getDashboardSnapshotForSession } from "@/lib/runtime-store";
 import { getCurrentSession } from "@/lib/server-session";
 
 export default async function AdminPage() {
@@ -16,7 +16,7 @@ export default async function AdminPage() {
     redirect(getDashboardPath(session.role));
   }
 
-  const snapshot = getDashboardSnapshot("admin");
+  const snapshot = getDashboardSnapshotForSession(session);
 
   return <AdminWorkspace snapshot={snapshot} userName={session.name} />;
 }

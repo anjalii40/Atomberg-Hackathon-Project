@@ -15,6 +15,7 @@ export type User = {
 export type Goal = {
   id: string;
   ownerId: string;
+  ownerName?: string;
   title: string;
   thrustArea: string;
   description: string;
