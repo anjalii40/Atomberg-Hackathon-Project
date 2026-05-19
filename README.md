@@ -1,169 +1,136 @@
 # AtomQuest Goal Portal
 
-<<<<<<< ours
-AtomQuest is an in-house goal setting and tracking portal built for the Atomberg Hackathon 1.0 problem statement. The current implementation focuses on the early execution phases:
+AtomQuest is a role-based goal setting and performance tracking portal built for the Atomberg Hackathon problem statement. It replaces fragmented spreadsheets and manual review loops with a single workspace for goal planning, approvals, quarterly check-ins, and governance visibility.
 
-- `Phase 0`: scope, architecture, and domain design
-- `Phase 1`: application foundation, role-aware shell, and seeded portal data
+The experience is designed around three clear user journeys:
 
-## Current Status
+- `Employee` creates goals, maintains weightage discipline, and updates quarterly progress
+- `Manager` reviews submissions, sends work back for rework, and approves locked goals
+- `Admin / HR` monitors governance, reporting, audit activity, and cycle health
 
-The repository now contains:
+## Overview
 
-- project documentation aligned to the BRD
-- a `Next.js + TypeScript` application scaffold
-- role-based dashboards for `Employee`, `Manager`, and `Admin / HR`
-- seeded mock data representing goals, approvals, check-ins, and audit logs
-- starter API routes for health and dashboard data
+This repo contains a hackathon-ready MVP with:
 
-## Quick Start
+- role-based dashboards for employee, manager, and admin
+- JWT authentication with middleware-backed route guards
+- employee goal sheet creation and submission
+- manager approval and rework workflows
+- admin governance and visibility surfaces
+- a shared runtime state layer for cross-role demo flows
 
-1. Install dependencies with `npm install`
-2. Start the app with `npm run dev`
-3. Open `http://localhost:3000`
+The current implementation is optimized for a reliable demo and fast iteration. It is intentionally lightweight, but the structure is ready to evolve into a persistent production system.
 
-Use the role switcher in the UI to review the three demo journeys.
+## What The Product Solves
 
-## Project Structure
+Organizations often struggle with goal setting because progress data lives in too many places. Managers review late, employees lack clarity, and HR teams have to reconstruct decision trails during appraisal cycles.
 
-- `docs/` project planning, architecture, feature tracking, and API notes
-- `src/app/` Next.js app router pages and API routes
-- `src/components/` reusable dashboard UI building blocks
-- `src/lib/` domain types and seeded portal data
+AtomQuest addresses that with a system that makes the lifecycle explicit:
 
-## Next Phases
+- create goal sheets with structured validations
+- submit them for manager review
+- approve or return them for rework
+- capture quarterly planned vs actual progress
+- preserve governance through role separation and audit visibility
 
-- `Phase 2`: employee goal creation and submission workflow
-- `Phase 3`: manager approval workflow
-- `Phase 4`: quarterly achievement tracking and check-ins
-- `Phase 5`: admin governance, reporting, and audit views
+## Current Scope
 
-See [docs/PHASE_EXECUTION_PLAN.md](/Users/anjaliprajapati/Atomberg Project/Atomberg-Hackathon-Project/docs/PHASE_EXECUTION_PLAN.md) for the detailed phase plan.
-=======
-AtomQuest Goal Portal is a role-based internal goal setting and tracking system built for the Atomberg Hackathon problem statement. The app covers three role journeys:
+Implemented in the app today:
 
-- `Employee`: create and submit goals, track quarterly check-ins, review prior goals
-- `Manager`: review approvals, conduct team check-ins, track progress health
-- `Admin / HR`: manage governance, reporting, audit visibility, and cycle oversight
-
-The current implementation is optimized for a hackathon MVP: clean role-specific dashboards, seeded data for deterministic demos, JWT-based auth, and a clear upgrade path to persistent backend workflows.
-
-## Problem Statement
-
-Organizations that rely on spreadsheets, emails, and fragmented review processes struggle with:
-
-- low visibility into employee goal progress
-- weak manager accountability during review cycles
-- inconsistent tracking of planned vs actual achievement
-- limited auditability for approval, rework, and unlock events
-
-AtomQuest solves that by providing a structured portal for:
-
-- goal creation and weightage validation
-- manager approval and rework
-- quarterly achievement capture
-- admin governance and audit oversight
-
-## Live Scope
-
-Implemented in the current repo:
-
-- public landing page with login and signup
-- JWT auth with role selection
-- role-guarded routes for `employee`, `manager`, and `admin`
-- role-specific dashboards with compact workspace layouts
-- employee goal sheet creation flow with validation
-- quarterly check-in views
-- manager approval and review views
-- admin governance, reporting, and audit dashboards
-- seeded demo data for stable demos
+- landing page with login and signup
+- protected dashboards for each role
+- employee goal sheet with weightage validation
+- manager approval and rework actions
+- locked goal protection at the API layer
+- admin workspace for governance and reporting views
+- analytics and audit-oriented dashboard modules
 
 Current limitations:
 
-- data is still in-memory / seeded, not persisted to a database
-- write actions are UI-local and reset between sessions
-- export buttons are present in the UI but are not yet wired to file generation
+- data is runtime-backed, not persisted in a database
+- exports are presentation-level UI, not file generation flows yet
+- check-in scoring and advanced workflow automation are still partial
 
 ## Tech Stack
 
-- `Next.js 15` with App Router
+- `Next.js 15`
 - `React 19`
 - `TypeScript`
-- `Tailwind CSS 4`
+- `Tailwind CSS`
 - `jose` for JWT signing and verification
-- `Next.js middleware` for route protection
-- seeded in-memory data layer in `src/lib/demo-data.ts`
+- `Next.js middleware` for role-based route protection
 
 ## Demo Credentials
 
-Use any of these to test role journeys:
+Use these accounts for local testing:
 
 - `employee@atomquest.local` / `employee123`
+- `priya@atomquest.local` / `priya123`
 - `manager@atomquest.local` / `manager123`
 - `admin@atomquest.local` / `admin123`
 
-## Local Setup
+## Getting Started
 
-1. Install dependencies:
+1. Install dependencies
 
 ```bash
 npm install
 ```
 
-2. Start the dev server:
+2. Start the development server
 
 ```bash
 npm run dev
 ```
 
-3. Open:
+3. Open the app
 
 ```text
 http://localhost:3000
 ```
 
-Optional environment variable:
+Optional:
 
 ```bash
 JWT_SECRET=your-secret-value
 ```
 
-If `JWT_SECRET` is not provided, the app falls back to a local development secret.
+If no `JWT_SECRET` is provided, the app falls back to a local development secret.
 
-## Role Journeys
+## Product Flows
 
 ### Employee
 
-- open `My Goals`
-- create goals with `title`, `thrust area`, `UoM`, `target`, `weightage`, and `description`
+- open the goal sheet
+- add goals with title, thrust area, UoM, target, description, and weightage
 - satisfy validation rules before submission
-- review prior seeded goals from the previous-goals dropdown
-- switch to quarter tabs for check-ins
+- submit goals for approval
+- review status changes and manager comments
+- move to quarterly check-in tabs when the cycle window opens
 
 ### Manager
 
-- review submitted goals
-- edit target and weightage before approval
-- approve or send back for rework
-- review check-in updates
-- inspect analytics and team progress
+- review submitted goal sheets
+- adjust target or weightage before approval
+- approve goals and lock them
+- send a sheet back for rework with comments
+- review team progress through check-ins and analytics
 
 ### Admin / HR
 
-- review unlock requests
-- inspect governance cards
-- open reporting summaries
-- inspect audit log activity
-- review organization-level analytics
+- monitor governance and cycle health
+- inspect reporting summaries
+- review audit-oriented activity views
+- oversee exception and compliance visibility
 
 ## Validation Rules
 
-The employee goal sheet enforces:
+The employee goal sheet currently enforces:
 
 - total weightage must equal exactly `100`
 - minimum weightage per goal is `10`
 - maximum number of goals is `8`
-- shared goals keep `title` and `target` read-only for recipient view
+- shared-goal behavior can restrict edit access depending on ownership state
 
 ## Application Architecture
 
@@ -311,7 +278,7 @@ flowchart TD
 
 ## Data Model
 
-Current typed entities in `src/lib/types.ts`:
+Core domain entities:
 
 - `User`
 - `Goal`
@@ -358,7 +325,7 @@ erDiagram
     }
 ```
 
-## Folder Structure
+## Project Structure
 
 ```text
 .
@@ -382,19 +349,19 @@ erDiagram
 └── middleware.ts
 ```
 
-## Important Files
+## Key Files
 
-- `src/app/employee/page.tsx`: employee route entry
-- `src/app/manager/page.tsx`: manager route entry
-- `src/app/admin/page.tsx`: admin route entry
-- `src/components/employee-workspace.tsx`: employee workspace UI
-- `src/components/manager-workspace.tsx`: manager workspace UI
-- `src/components/admin-workspace.tsx`: admin workspace UI
-- `src/components/auth-panel.tsx`: login and signup form
-- `src/lib/auth.ts`: JWT helpers and demo credentials
-- `src/lib/server-session.ts`: server-side session reader
-- `src/lib/demo-data.ts`: seeded mock data
-- `middleware.ts`: route protection and role redirects
+- `src/app/employee/page.tsx` employee route entry
+- `src/app/manager/page.tsx` manager route entry
+- `src/app/admin/page.tsx` admin route entry
+- `src/components/employee-workspace.tsx` employee workspace experience
+- `src/components/manager-workspace.tsx` manager approval and review experience
+- `src/components/admin-workspace.tsx` admin governance interface
+- `src/components/auth-panel.tsx` login and signup UI
+- `src/lib/auth.ts` JWT helpers and demo credentials
+- `src/lib/runtime-store.ts` shared runtime state used for cross-role demo flows
+- `src/lib/server-session.ts` server-side session access
+- `middleware.ts` route protection and role-based redirects
 
 ## API Surface
 
@@ -404,60 +371,42 @@ Current endpoints:
 - `POST /api/auth/signup`
 - `POST /api/auth/logout`
 - `GET /api/health`
-- `GET /api/dashboard?role=employee|manager|admin`
+- `GET /api/dashboard`
+- `POST /api/goals/submit`
+- `POST /api/goals/[goalId]/review`
+- `PATCH /api/goals/[goalId]`
 
 ### API Summary
 
 | Endpoint | Method | Purpose |
 | --- | --- | --- |
-| `/api/auth/login` | `POST` | authenticate demo user and issue JWT |
-| `/api/auth/signup` | `POST` | create a demo session for chosen role |
-| `/api/auth/logout` | `POST` | clear session cookie |
+| `/api/auth/login` | `POST` | authenticate user and issue JWT |
+| `/api/auth/signup` | `POST` | create a demo session for a chosen role |
+| `/api/auth/logout` | `POST` | clear the session cookie |
 | `/api/health` | `GET` | health check |
-| `/api/dashboard` | `GET` | role-based dashboard snapshot |
+| `/api/dashboard` | `GET` | return the dashboard snapshot for the current session |
+| `/api/goals/submit` | `POST` | submit an employee goal sheet |
+| `/api/goals/[goalId]/review` | `POST` | approve or send a goal sheet for rework |
+| `/api/goals/[goalId]` | `PATCH` | update editable goals; reject locked-goal bypass attempts |
 
-Planned next endpoints:
-
-- `POST /api/goals`
-- `PATCH /api/goals/:id`
-- `POST /api/goals/:id/submit`
-- `POST /api/goals/:id/approve`
-- `POST /api/goals/:id/rework`
-- `POST /api/check-ins`
-- `PATCH /api/check-ins/:id`
-- `GET /api/reports/achievement`
-
-## Role Access Rules
+## Access Model
 
 - `Employee` can only access `/employee`
 - `Manager` can only access `/manager`
 - `Admin` can only access `/admin`
-- middleware redirects role mismatches back to the correct dashboard
-- route-level checks also enforce role correctness on the server
+- middleware guards routes before render
+- server routes also validate the active session role
 
-## Current UX Decisions
+## Where To Go Next
 
-- each role uses a dedicated sidebar with only relevant sections
-- employee current sheet is editable and separate from previously seeded goals
-- previous goals are visible through a dropdown preview instead of blocking the active draft
-- manager and admin dashboards surface only review/governance tasks relevant to their role
+Strong next upgrades for this codebase:
 
-## Future Improvements
-
-- replace seeded repository with PostgreSQL + Prisma
-- persist goal creation and approvals across sessions
-- wire export buttons to CSV / Excel download
-- implement real approval workflow state syncing across roles
-- add Microsoft Entra ID / Teams / email integrations
-- support audit filters and analytics drilldowns
-
-## Hackathon Submission Checklist
-
-- hosted demo URL
-- source repository
-- architecture diagram
-- working journey for employee, manager, and admin
-- role-aware login credentials
+- move runtime state to `PostgreSQL + Prisma`
+- implement persistent quarterly check-ins and scoring
+- wire CSV / Excel export to real generated files
+- add shared-goal ownership sync
+- expand audit logging for every write path
+- integrate Microsoft Entra ID, Teams, and email notifications
 
 ## Related Docs
 
@@ -466,5 +415,3 @@ Planned next endpoints:
 - [API Documentation](./docs/API_DOCUMENTATION.md)
 - [Features](./docs/FEATURES.md)
 - [Phase Execution Plan](./docs/PHASE_EXECUTION_PLAN.md)
-
->>>>>>> theirs
